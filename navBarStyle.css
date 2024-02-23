@@ -1,0 +1,32 @@
+/*This is the css file that makes the nav bar look good,
+Credit to w3schools navbar article*/
+
+/*This is the CSS styling that makes the navbar appear horizontally*/
+.navBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+}
+
+.navBarItem {
+    flex: 1;
+}
+
+/*If we need to change the text size/color, background color, etc of navbar, use this*/
+.navBarLink {
+    display: block;
+    padding: 8px;
+    background-color: #dddddd;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    color:black;
+    text-decoration:none;
+}
+
+/*Background color of the navbar for the page you are on*/
+.navBarLink.active {
+    background-color: #a2a2a2;
+}

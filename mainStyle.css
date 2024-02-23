@@ -1,0 +1,9 @@
+/*This is the style for most of the extension*/
+
+/*This controls the size of the extension window when you click on it*/
+body {
+    width: 700px;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+}

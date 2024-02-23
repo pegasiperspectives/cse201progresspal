@@ -1,43 +1,27 @@
+<!DOCTYPE html>
 <html>
-
 <head>
-  <link rel="shortcut icon" type="image/x-icon" href="yellowflower.png" />
+    <!--Adds the style to make the nav bar look good-->
+    <link rel="stylesheet" href="navBarStyle.css">
+
+    <!--Adds the style for the rest of the extension, such as the window size-->
+    <link rel="stylesheet" href="mainStyle.css">
 </head>
-
 <body>
-    <br>
-    <br>
-    <h1>
-        There's nothing here. <br> Go back to work.
-    </h1>
+    <!--This is the nav bar code that makes it show up at the top-->
+    <!--If you want to add another page, make it, add it to the folder, and-->
+    <!--copy and paste the lines that start with li, changing the href and white text.-->
+    <ul class="navBar">
+        <li class="navBarItem"><a href="main.html" class="navBarLink">Main</a></li>
+        <li class="navBarItem"><a href="tasks.html" class="navBarLink">Tasks</a></li>
+    </ul>
     
+    <!--Page Contents-->
+    <h1>Main Page</h1>
+    <h1><a href="tasks.html">Go to tasks page</a></h1>
+
+    <!--This Javascript file makes it so the background of the page that you are on-->
+    <!--has a different color than the rest of the navbar.-->
+    <script src="navBarBackgroundHighlight.js"></script>
 </body>
-
 </html>
-
-<style>
-
-h1 {
-    font-size: 100px;
-    font-family: placing;
-    color: black;
-    vertical-align:middle;
-    align-items: center;
-    padding-left: 300px;
-    padding-top: 100px;
-}
-
-br {
-    height: 100px;
-}
-
-body {
-    background-color:palegoldenrod;
-}
-
-@font-face {
-    font-family: placing;
-    src: url(KitschyRetroRegular-9YnqB.ttf);
-  }
-
-</style>
