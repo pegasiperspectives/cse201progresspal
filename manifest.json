@@ -4,7 +4,7 @@
   "description": "Productivity To-Do List+",
   "version": "1.0",
   "action": {
-    "default_popup": "main.html",
+    "default_popup": "index.html",
     "default_icon": "hello_extensions.png"
   }
 }
