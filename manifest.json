@@ -3,6 +3,7 @@
   "name": "Progress Pal",
   "description": "Productivity To-Do List+",
   "version": "1.0",
+  "permissions": ["storage"],
   "action": {
     "default_popup": "index.html",
     "default_icon": "hello_extensions.png"
