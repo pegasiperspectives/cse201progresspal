@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <!--Adds the style to make the nav bar look good-->
     <link rel="stylesheet" href="navBarStyle.css">
 
+
+
     <!--Adds the style for the rest of the extension, such as the window size-->
     <link rel="stylesheet" href="mainStyle.css">
+
 </head>
 <body>
     <!--This is the nav bar code that makes it show up at the top-->
@@ -15,6 +19,10 @@
         <li class="navBarItem"><a href="index.html" class="navBarLink">Main</a></li>
         <li class="navBarItem"><a href="tasks.html" class="navBarLink">Tasks</a></li>
     </ul>
+
+
+
+
     
     <!--Page Contents-->
     <!--Button that keeps track of total clicks across sessions-->
@@ -23,23 +31,34 @@
     <!--This is the paragraph tag that displays the number of button clicks-->
     <p id="test"></p>
 
+
     <br>
+
 
     <!--This is the label and text box that the users enters their task text in-->
     <label for="description">Task description</label><br>
     <input type="text" id="description" name="description" value="Add task here!"><br><br>
+
     <!--This button runs the code that adds the task to the list below-->
     <!--See the listTest.js file for the code that makes this work-->
     <button id="listButton">Add task</button>
+
     <!--This is the div tag that contains all of the button task pairs-->
     <div id="listTest"></div>
+
+
+
+
 
     <!--This JavaScript file makes it so the background of the page that you are on-->
     <!--has a different color than the rest of the navbar.-->
     <script src="navBarBackgroundHighlight.js"></script>
+
     <!--This is the js file that contains the code for the counter of button clicks-->
     <script src="incrementTest.js"></script>
+
     <!--This is the code that allows user to add and remove tasks-->
     <script src="listTest.js"></script>
+
 </body>
 </html>
