@@ -14,6 +14,7 @@ let counter1 = 1;
 
 
 // This code removes the default text in the user input box on the main page.
+// When you click on the text field, "Add task here!" disappears.
 var textField1 = document.getElementById("description");
 textField1.onfocus = function() {
     if(this.value === 'Add task here!') {
