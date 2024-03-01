@@ -5,7 +5,16 @@ console.log("list " + counter1)
 
 document.getElementById("listButton").addEventListener("click", function() {
 var newElement = document.createElement("p");
-newElement.textContent = "Element: " + counter1;
+// Get the text field by its id
+var textField = document.getElementById("description");
+
+// Get the value of the text field
+var value = textField.value;
+
+// Set the value of the text field to blank
+textField.value = "Add task here!";
+
+newElement.textContent = value;
 newElement.id = "element" + counter1;
 newElement.style.display = "inline-block";
 var newButton = document.createElement("button");
