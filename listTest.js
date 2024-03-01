@@ -2,6 +2,12 @@
 let counter1 = 1;
 console.log("list " + counter1)
 
+var textField = document.getElementById("description");
+textField.onfocus = function() {
+    if(this.value === 'Add task here!') {
+        this.value = '';
+    }
+}
 
 document.getElementById("listButton").addEventListener("click", function() {
 var newElement = document.createElement("p");
