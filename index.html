@@ -17,20 +17,29 @@
     </ul>
     
     <!--Page Contents-->
-    <button id="click">Click to add to counter</button>
+    <!--Button that keeps track of total clicks across sessions-->
+    <!--See the JavaScript file incrementTest.js for the code that runs when the button is clicked-->
+    <button id="clickTracker">Click to add to counter</button>
+    <!--This is the paragraph tag that displays the number of button clicks-->
     <p id="test"></p>
+
+    <br>
+
+    <!--This is the label and text box that the users enters their task text in-->
     <label for="description">Task description</label><br>
     <input type="text" id="description" name="description" value="Add task here!"><br><br>
+    <!--This button runs the code that adds the task to the list below-->
+    <!--See the listTest.js file for the code that makes this work-->
     <button id="listButton">Add task</button>
-    
-
+    <!--This is the div tag that contains all of the button task pairs-->
     <div id="listTest"></div>
 
     <!--This JavaScript file makes it so the background of the page that you are on-->
     <!--has a different color than the rest of the navbar.-->
     <script src="navBarBackgroundHighlight.js"></script>
-    <!-- Testing a javascript button and local storage-->
+    <!--This is the js file that contains the code for the counter of button clicks-->
     <script src="incrementTest.js"></script>
+    <!--This is the code that allows user to add and remove tasks-->
     <script src="listTest.js"></script>
 </body>
 </html>
