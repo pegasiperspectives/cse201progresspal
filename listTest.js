@@ -42,7 +42,7 @@ document.getElementById("listButton").addEventListener("click", function() {
     // in the text field. Sets style.display to "inline-block" so the button and paragraph tag will
     // show up next to each other.
     var newElement = document.createElement("p");
-    newElement.textContent = " " + value;
+    newElement.textContent = "Task: " + value;
     newElement.style.display = "inline-block";
 
 
