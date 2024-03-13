@@ -12,6 +12,9 @@ let taskArray = [];
 let counter1;
 
 
+let dueDates = {};
+
+
 window.onload = function() {
     // Creates a variable called list that is connected to the div on the index page with the id = "listTest"
     var list = document.getElementById("listTest");
@@ -19,10 +22,10 @@ window.onload = function() {
 
     // Checks to see if taskArray and counter1 are in the local storage
     // (they will be if the user has generated a task)
-    chrome.storage.local.get(['taskArray', 'counter1'], function(result) {
+    chrome.storage.local.get(['taskArray', 'counter1', 'dueDates'], function(result) {
         taskArray = result.taskArray || [];
         counter1 = result.counter1 || 1;
-
+        dueDates = result.dueDates || {};
 
         // if there are any tasks stored
         if (result.taskArray !== undefined) {
@@ -51,15 +54,30 @@ window.onload = function() {
                 // Makes the button say "Completed!"
                 newButton.textContent = "Completed!";
 
+                var dueDateElement = document.createElement("p");
+                console.log(dueDates[newElement.id])
+                dueDateElement.textContent = " || Due: " + dueDates[newElement.id]
+                dueDateElement.style.display = "inline-block";
+
 
                 // Adds the button and paragraph to the div
                 newDiv.appendChild(newButton);
                 newDiv.appendChild(newElement);
+                newDiv.appendChild(dueDateElement);
 
 
                 // Makes it so if a button is clicked it finds the corresponding element of the
                 // task array and deletes it. Also deletes the div from the page.
                 newButton.addEventListener("click", function() {
+
+                    delete dueDates[newElement.id];
+
+                    // Save the updated due dates in local storage
+                    chrome.storage.local.set({ dueDates: dueDates }, function() {
+                        console.log('Due dates updated');
+                    });
+
+
                     newDiv.parentNode.removeChild(newDiv);
                     let index = taskArray.findIndex(task => task.id === parseInt(newElement.id));
                     if (index !== -1) {
@@ -91,11 +109,58 @@ textField1.onfocus = function() {
     }
 }
 
+let today = new Date();
+
+var dayTextField = document.getElementById("day");
+var monthTextField = document.getElementById("month");
+var yearTextField = document.getElementById("year");
+day.value = today.getDate();
+month.value = today.getMonth() + 1;
+year.value = today.getFullYear();
+
+dayTextField.onfocus = function() {
+    if(this.value == today.getDate()) {
+        this.value = '';
+    }
+}
+
+monthTextField.onfocus = function() {
+    if(this.value == (today.getMonth() + 1)) {
+        this.value = '';
+    }
+}
+
+yearTextField.onfocus = function() {
+    if(this.value == today.getFullYear()) {
+        this.value = '';
+    }
+}
 
 
 // This code runs every time the "Add task" button is clicked
 // It generates a new to do list item every time the button is clicked.
 document.getElementById("listButton").addEventListener("click", function() {
+
+
+
+    var dayTextField = document.getElementById("day");
+    var monthTextField = document.getElementById("month");
+    var yearTextField = document.getElementById("year");
+    var dueDay = Number(dayTextField.value);
+    var dueMonth = Number(monthTextField.value);
+    var dueYear = Number(yearTextField.value);
+    day.value = today.getDate();
+    month.value = today.getMonth() + 1;
+    year.value = today.getFullYear();
+    var allValidInputsDate = (!isNaN(dueDay)) && (!isNaN(dueMonth)) && (!isNaN(dueYear));
+    var dueDateObj = today;
+    if (allValidInputsDate) {
+        dueDateObj = new Date(dueYear, dueMonth - 1, dueDay);
+    }
+    console.log(dueDateObj.toDateString());
+
+
+
     // Creates a new text field object based on the contents of the index page text field.
     // The value variable contains the text the user enters (or "Enter task here!" if they
     // don't enter anything). Finally, it resets the value of the text field back to "Add task
@@ -125,6 +190,11 @@ document.getElementById("listButton").addEventListener("click", function() {
     // the itself and its corresponding paragraph tag. (In the code, parentNode describes the div that is created
     // in the next code block). Also deletes the tasks from local storage
     newButton.addEventListener("click", function() {
+        delete dueDates[newElement.id];
+        // Save the updated due dates in local storage
+        chrome.storage.local.set({ dueDates: dueDates }, function() {
+            console.log('Due dates updated');
+        });
         newDiv.parentNode.removeChild(newDiv);
         let index = taskArray.findIndex(task => task.id === parseInt(newElement.id));
         if (index !== -1) {
@@ -136,12 +206,22 @@ document.getElementById("listButton").addEventListener("click", function() {
         });
     });
 
+    dueDates[newElement.id] = dueDateObj.toDateString();
+
+    chrome.storage.local.set({ dueDates: dueDates }, function() {
+        console.log('Due dates updated');
+    });
+
+    var dueDateElement = document.createElement("p");
+    dueDateElement.textContent = " || Due: " + dueDates[newElement.id];
+    dueDateElement.style.display = "inline-block";
 
     // Append the new paragraph and the new button to the list to a div. The button will be displayed first,
     // and the paragraph containing the task text will be shown next to it.
     var newDiv = document.createElement("div");
     newDiv.appendChild(newButton);
     newDiv.appendChild(newElement);
+    newDiv.appendChild(dueDateElement);
 
 
     // Pushes the new task to the array of tasks. also updates the value of counter1 in storage
@@ -153,6 +233,7 @@ document.getElementById("listButton").addEventListener("click", function() {
 
     // We now add the div containing the button paragraph to list, that way it appears on the new web page.
     list.appendChild(newDiv);
+    console.log(dueDates[newElement.id])
 
     // Increments the total task counter
     counter1++;
