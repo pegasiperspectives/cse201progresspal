@@ -4,10 +4,10 @@ let inputValues = {}; //holds the title input
 let listToggles = {}; //holds the state of the toggled lists
 let taskArrays = {}; //holds the taskArrays
 let listColors = {};
-let wholePageSettings = document.getElementById("topSettings");
+let wholePageSettings = document.getElementById("topmostRow");
 const modal = document.createElement("div");
 const settingBtn = document.getElementById("overallSettings");
-const topRow = document.getElementById("topmostRow");
+const topRow = document.getElementById("topSettings");
 modal.id = "main-modal";
 modal.classList.add("modal");
 modal.classList.add("hidden");
@@ -17,6 +17,7 @@ colorTheme.type = "color";
 colorTheme.id = "color-picker-all";
 colorTheme.style.display = "block";
 colorTheme.style.margin = "20px";
+var bodyColor = "black";
 
 modal.appendChild(colorTheme);
 const tabContainer = document.getElementById("tab-container");
@@ -29,9 +30,22 @@ window.onload = function () { //runs when the page loads
 
     const newListButton = document.getElementById("generate new list"); //clickable button to generate a new list
     newListButton.addEventListener("click", createNewList); //creates a new list by calling the method
-    wholePageSettings.addEventListener("click", createAllSettings);
 
-    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors'], function (result) { //pulls values from storage
+    // Add event listener for mouseover on the settings row
+    wholePageSettings.addEventListener('mouseover', function () {
+        // Show the setting button
+        topRow.style.visibility = 'visible';
+    });
+
+    // Add event listener for mouseout on the settings row
+    wholePageSettings.addEventListener('mouseout', function () {
+        // Hide the setting button
+        topRow.style.visibility = 'hidden';
+    });
+
+    topRow.addEventListener("click", createAllSettings);
+
+    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor'], function (result) { //pulls values from storage
         console.log('Data retrieved:', result);
 
         listArray = result.listArray || []; //sets up the listArray
@@ -39,6 +53,12 @@ window.onload = function () { //runs when the page loads
         listToggles = result.listToggle || {}; //sets up the toggle state of lists array
         taskArrays = result.taskArrays || {}; //sets up the array of taskArrays
         listColors = result.listColors || {};
+        bodyColor = result.bodyColor;
+
+        document.body.style.backgroundColor = bodyColor;
+        tabContainer.style.backgroundColor = bodyColor;
+        topRow.style.backgroundColor = bodyColor;
+
         numOfLists = 0; // Set numOfLists to the value retrieved from storage or 0 if not available
         console.log("number of lists: " + numOfLists);
         console.log("list array length: " + listArray.length);
@@ -56,35 +76,22 @@ function createAllSettings() {
 
     colorTheme.addEventListener('input', function (event) {
         // Get the selected color value
-        const selectedColor = event.target.value;
+        bodyColor = event.target.value;
 
-        document.body.style.backgroundColor = selectedColor;
-        tabContainer.style.backgroundColor = selectedColor;
-        /*  chrome.storage.local.set({ 'listColors': listColors }, function () {
-              console.log('Color saved for list ' + numOfLists + ':', selectedColor);
-          }); */
+        document.body.style.backgroundColor = bodyColor;
+        tabContainer.style.backgroundColor = bodyColor;
+        topRow.style.backgroundColor = bodyColor;
+        chrome.storage.local.set({ 'bodyColor': bodyColor }, function () {
+              console.log('Color saved for body', bodyColor);
+          }); 
     });
 
     // Function to handle click outside modal
     function clickOutsideModal(event) {
-        if (!modal.contains(event.target) && event.target !== wholePageSettings) {
+        if (!modal.contains(event.target) && event.target !== topRow) {
             modal.classList.add("hidden");
         }
     }
-
-    // Add event listener for mouseover on the settings row
-    topRow.addEventListener('mouseover', function () {
-        // Show the setting button
-        settingBtn.classList.remove('hidden');
-        settingBtn.style.textAlign = "center";
-    });
-
-
-    // Add event listener for mouseout on the settings row
-    topRow.addEventListener('mouseout', function () {
-        // Hide the setting button
-        settingBtn.classList.add('hidden');
-    });
 
     document.body.addEventListener("click", clickOutsideModal);
 }
