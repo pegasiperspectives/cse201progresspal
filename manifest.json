@@ -1,11 +1,13 @@
 {
-  "manifest_version": 3,
-  "name": "Progress Pal",
-  "description": "Productivity To-Do List+",
-  "version": "1.0",
-  "permissions": ["storage"],
-  "action": {
-    "default_popup": "index.html",
-    "default_icon": "hello_extensions.png"
+    "manifest_version": 3,
+    "name": "Progress Pal T",
+    "description": "Productivity To-Do List+",
+    "version": "1.0",
+    "permissions": ["storage"],
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": "bird.png"
+    }
   }
-}
+
+  

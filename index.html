@@ -1,73 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
+
 <head>
-
-    <!--Adds the style to make the nav bar look good-->
-    <link rel="stylesheet" href="navBarStyle.css">
-
-
-
-    <!--Adds the style for the rest of the extension, such as the window size-->
-    <link rel="stylesheet" href="mainStyle.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Chrome Extension Title</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!--This is the nav bar code that makes it show up at the top-->
-    <!--If you want to add another page, make it, add it to the folder, and-->
-    <!--copy and paste the lines that start with li, changing the href and white text.-->
-    <ul class="navBar">
-        <li class="navBarItem"><a href="index.html" class="navBarLink">Main</a></li>
-        <li class="navBarItem"><a href="tasks.html" class="navBarLink">Tasks</a></li>
-    </ul>
+
+<div id="topmostRow" height="110px" width="140px">
+  <div  style="background-color: black; text-align: center;" id="topSettings">
+    <input type="image" height="100px" width="130px" src="download.png" text-align="center" id="overallSettings"/>
+  </div>
+</div>
+
+
+<div id="tab-container" style="position: relative; background-color: black;">
+  <input type="image" height="60px" width="55px" src="notepad.png" id="generate new list" title="generate a new list" style="position: absolute;"/>
+  </div>
+
+<body style="background-color: black; padding: 20px;" id="pageColor">
 
 
 
-
-    
-    <!--Page Contents-->
-    <!--Button that keeps track of total clicks across sessions-->
-    <!--See the JavaScript file incrementTest.js for the code that runs when the button is clicked-->
-    <button id="clickTracker">Click to add to counter</button>
-    <!--This is the paragraph tag that displays the number of button clicks-->
-    <p id="test"></p>
-
-
-    <br>
-
-
-    <!--This is the label and text box that the users enters their task text in-->
-    <label for="description">Task description</label><br>
-    <input type="text" id="description" name="description" value="Add task here!"><br><br>
-
-    <div>
-        <label for="day" style="display: inline-block;">Due date day</label>
-        <input type="text" id="day" name="description" value="Add task here!" style="display: inline-block;"><br>
-        <label for="month" style="display: inline-block;">Due date month</label>
-        <input type="text" id="month" name="description" value="Add task here!" style="display: inline-block;"><br>
-        <label for="year" style="display: inline-block;">Due date year</label>
-        <input type="text" id="year" name="description" value="Add task here!" style="display: inline-block;"><br>
-    </div>
-    
-    <!--This button runs the code that adds the task to the list below-->
-    <!--See the listTest.js file for the code that makes this work-->
-    <button id="listButton">Add task</button>
-
-    <!--This is the div tag that contains all of the button task pairs-->
-    <div id="listTest"></div>
-
-
-
-
-
-    <!--This JavaScript file makes it so the background of the page that you are on-->
-    <!--has a different color than the rest of the navbar.-->
-    <script src="navBarBackgroundHighlight.js"></script>
-
-    <!--This is the js file that contains the code for the counter of button clicks-->
-    <script src="incrementTest.js"></script>
-
-    <!--This is the code that allows user to add and remove tasks-->
-    <script src="listTest.js"></script>
-
+  <!-- JavaScript files -->
+  <script src="listTest.js"></script>
 </body>
+
+
 </html>

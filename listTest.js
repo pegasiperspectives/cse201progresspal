@@ -1,267 +1,605 @@
-// This is the JavaScript file that makes a to-do list.
+var numOfLists = 0; //keeps track of the number of lists
+let listArray = []; //holds the lists
+let inputValues = {}; //holds the title input
+let listToggles = {}; //holds the state of the toggled lists
+let taskArrays = {}; //holds the taskArrays
+let listColors = {};
+let wholePageSettings = document.getElementById("topSettings");
+const modal = document.createElement("div");
+const settingBtn = document.getElementById("overallSettings");
+const topRow = document.getElementById("topmostRow");
+modal.id = "main-modal";
+modal.classList.add("modal");
+modal.classList.add("hidden");
+document.body.appendChild(modal);
+const colorTheme = document.createElement("input");
+colorTheme.type = "color";
+colorTheme.id = "color-picker-all";
+colorTheme.style.display = "block";
+colorTheme.style.margin = "20px";
 
-// Creates an array filled with the description of the tasks
-// it will be updated later if there is something stored.
-let taskArray = [];
-
-
-// Keeps track of number of tasks generated. It will be incremented by one
-// every time the "Add task" button is clicked. This is called "counter1" because,
-// incrementTest.js already has a variable named "counter" and I don't want there
-// to be any problems.
-let counter1;
-
-// Creates what is essentially a dictionary that takes the unique id of an element
-// and it outputs the due date of that element.
-let dueDates = {};
-
-
-window.onload = function() {
-    // Creates a variable called list that is connected to the div on the index page with the id = "listTest"
-    var list = document.getElementById("listTest");
-
-
-    // Checks to see if taskArray and counter1 are in the local storage
-    // (they will be if the user has generated a task)
-    // Also loads the due date array.
-    chrome.storage.local.get(['taskArray', 'counter1', 'dueDates'], function(result) {
-        taskArray = result.taskArray || [];
-        counter1 = result.counter1 || 1;
-        dueDates = result.dueDates || {};
-
-        // if there are any tasks stored
-        if (result.taskArray !== undefined) {
+modal.appendChild(colorTheme);
+const tabContainer = document.getElementById("tab-container");
+tabContainer.style.display = "inline-block";
+let puppyArray = ["puppy.png", "puppywsunglasses.png", "puppywastrohelmet.png"];
+let birdArray = ["bird.png", "birdwsunglasses.png", "birdwastrohelmet.png"];
 
 
-            // This loop takes every element in the task array and adds
-            // it to the page.
-            for (let i = 0; i < taskArray.length; i++) {
-                // Creates a new button, paragraph tag, and div
-                let newDiv = document.createElement("div");
-                let newElement = document.createElement("p");
-                let newButton = document.createElement("button");
+window.onload = function () { //runs when the page loads
+
+    const newListButton = document.getElementById("generate new list"); //clickable button to generate a new list
+    newListButton.addEventListener("click", createNewList); //creates a new list by calling the method
+    wholePageSettings.addEventListener("click", createAllSettings);
+
+    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors'], function (result) { //pulls values from storage
+        console.log('Data retrieved:', result);
+
+        listArray = result.listArray || []; //sets up the listArray
+        inputValues = result.inputValues || {}; //sets up the title input array
+        listToggles = result.listToggle || {}; //sets up the toggle state of lists array
+        taskArrays = result.taskArrays || {}; //sets up the array of taskArrays
+        listColors = result.listColors || {};
+        numOfLists = 0; // Set numOfLists to the value retrieved from storage or 0 if not available
+        console.log("number of lists: " + numOfLists);
+        console.log("list array length: " + listArray.length);
+        listArray.forEach((item) => {
+            createNewList();
+            console.log("creating list # " + numOfLists);
+        });
+    });
+}
 
 
-                // Sets the style to inline block so they show up next to each other
-                newElement.style.display = "inline-block";
-                newButton.style.display = "inline-block";
+function createAllSettings() {
+    event.stopPropagation();
+    modal.classList.toggle("hidden");
+
+    colorTheme.addEventListener('input', function (event) {
+        // Get the selected color value
+        const selectedColor = event.target.value;
+
+        document.body.style.backgroundColor = selectedColor;
+        tabContainer.style.backgroundColor = selectedColor;
+        /*  chrome.storage.local.set({ 'listColors': listColors }, function () {
+              console.log('Color saved for list ' + numOfLists + ':', selectedColor);
+          }); */
+    });
+
+    // Function to handle click outside modal
+    function clickOutsideModal(event) {
+        if (!modal.contains(event.target) && event.target !== wholePageSettings) {
+            modal.classList.add("hidden");
+        }
+    }
+
+    // Add event listener for mouseover on the settings row
+    topRow.addEventListener('mouseover', function () {
+        // Show the setting button
+        settingBtn.classList.remove('hidden');
+        settingBtn.style.textAlign = "center";
+    });
 
 
-                // Sets the text of the paragraph tag to the stored value in task array
-                newElement.textContent = taskArray[i].text;
-                // Stores the ID in the newElement
-                newElement.id = taskArray[i].id;
+    // Add event listener for mouseout on the settings row
+    topRow.addEventListener('mouseout', function () {
+        // Hide the setting button
+        settingBtn.classList.add('hidden');
+    });
+
+    document.body.addEventListener("click", clickOutsideModal);
+}
+
+//create the list no matter what but put everything besides the button in a conditional?
+//but what about the event listener problem?
+
+function createNewList() {
+    numOfLists++; //increments the number of lists
+
+    const numOfTabs = listArray.length;
+    const tabWidth = 1 / numOfTabs * 635;
+    const color = listColors[numOfLists] || "#C4A577";
+
+    const tabButton = document.createElement("button"); //creates a tab button for the list
+    tabButton.className = "tab";
+    tabButton.id = "tab" + numOfLists;
+    tabButton.textContent = "List " + numOfLists;
+    tabButton.style.fontFamily = "listTitle";
+    tabButton.style.fontSize = "20px";
+    tabButton.style.height = "60px";
+    tabButton.style.width = "" + tabWidth + "px";
+    tabButton.style.backgroundColor = color;
+    tabButton.style.borderRadius = "10px 10px 0px 0px";
+    tabButton.style.border = "none";
+
+    if (numOfLists == 1) {
+        tabButton.style.marginLeft = "65px";
+    } else {
+        tabButton.style.marginLeft = "0px";
+    }
+
+    tabContainer.appendChild(tabButton); //adds the tab button to the tab container
+
+    const listContainer = document.createElement("div"); //creates the list container
+    listContainer.id = "list-container-" + numOfLists; //gives the list container an id
+
+    const isToggled = listToggles["list" + numOfLists];
+    const tableClass = isToggled ? "" : "hidden";
+
+    /* if (isToggled == true) {
+         tabButton.style.filter = "brightness(90%)";
+     } */
+
+    const list = document.createElement("div"); //creates a list div for the list currently on
+    list.classList.add("list"); //adds the class 'list' to the div element ^
+    list.id = "list" + numOfLists; //sets the id based on which list currently on
+    const listID = list.id;
+
+    const table = document.createElement("table"); //creates the table for this list
+    table.className = tableClass;
+    table.id = "table-" + numOfLists;
+    table.style.backgroundColor = color;
+
+    const settingsRow = document.createElement("tr"); //creates the row for the setting for this list
+    settingsRow.id = "settings-row-" + numOfLists; //gives setting row id based on current list 
+    settingsRow.style.textAlign = "center"; //makes sure this list's setting row is centered
 
 
-                // Makes the button say "Completed!"
-                newButton.textContent = "Completed!";
-
-                // Creates a paragraph element for the due date of a task
-                // it displays the date next to the task description
-                var dueDateElement = document.createElement("p");
-                dueDateElement.textContent = " || Due: " + dueDates[newElement.id]
-                dueDateElement.style.display = "inline-block";
+    const settingsCell = document.createElement("td"); //creates the column for the setting button
+    settingsCell.colSpan = "3"; //makes sure the setting button spans the width of the extension
+    settingsCell.style.height = "70px"; //makes sure the setting button is the right height
 
 
-                // Adds the button and paragraph to the div
-                newDiv.appendChild(newButton);
-                newDiv.appendChild(newElement);
-                newDiv.appendChild(dueDateElement);
+    const settingBtnDiv = document.createElement("div"); //creates a div for the setting button
+    settingBtnDiv.id = "setting-btn-" + numOfLists; //sets the id for the setting button based on list currently on
 
 
-                // Makes it so if a button is clicked it finds the corresponding element of the
-                // task array and deletes it. Also deletes the div from the page. Also deletes the
-                // corresponding due date from the dictionary.
-                newButton.addEventListener("click", function() {
+    const settingBtnImage = document.createElement("input"); //creates the actual button for the settings
+    settingBtnImage.type = "image"; //clarifies this button is from an image
+    settingBtnImage.height = "60"; //height of the setting icon button
+    settingBtnImage.width = "80"; //width of the setting button
+    settingBtnImage.src = "download.png"; //link for the setting icon for button
 
-                    // Deletes the dictionary entry for the given task id
-                    delete dueDates[newElement.id];
 
-                    // Save the updated due dates in local storage
-                    chrome.storage.local.set({ dueDates: dueDates }, function() {
-                        console.log('Due dates updated');
-                    });
+    settingBtnDiv.appendChild(settingBtnImage); //puts the image in the setting div
+    settingsCell.appendChild(settingBtnDiv); //puts the setting div in the setting cell
+    settingsRow.appendChild(settingsCell); //puts the setting cell in the top row of the table
 
-                    // removes the node where the task id matches
-                    newDiv.parentNode.removeChild(newDiv);
-                    let index = taskArray.findIndex(task => task.id === parseInt(newElement.id));
-                    if (index !== -1) {
-                        taskArray.splice(index, 1);
-                    }
+    const titleRow = document.createElement("tr"); //creates the next row for this table
+    titleRow.id = "title-row-" + numOfLists; //gives this row an id based on current list
 
-                    chrome.storage.local.set({ taskArray: taskArray }, function() {
-                        console.log('Task Array updated');
-                    });
+    const titleCell = document.createElement("td"); //creates the column for the title for this table
+    titleCell.colSpan = "3"; //makes sure title spans across width of the page
+    titleCell.style.textAlign = "center"; //aligns title center
+
+    const toggleTitleBtn = document.createElement("input"); //clarifies the title button is an image input
+    toggleTitleBtn.type = "image"; //clarifies the title button is an image input
+    toggleTitleBtn.height = "30"; //title icon height
+    toggleTitleBtn.width = "40"; //title icon width
+    toggleTitleBtn.src = "titlebutton.png"; //link for the title icon for button
+    toggleTitleBtn.id = "toggle-title-btn-" + numOfLists; //id for the title icon
+
+    const titleInput = document.createElement("input"); //creates the title input box
+    titleInput.type = "text"; //clarifies the input is text
+    titleInput.style.backgroundColor = color; //sets the background color of the input box
+    titleInput.id = "title-input-" + numOfLists; //gives title input id based on current list
+    titleInput.classList.add("titleStyle"); //makes sure title is styled correctly from style.css
+
+    const storedInputValue = inputValues['list' + numOfLists] || "enter title here"; //retrieves stored title value on reload
+    titleInput.placeholder = storedInputValue; //makes the placeholder for title input whatever was previously entered
+
+    const taskRow = document.createElement("tr"); //creates the row in the table for the tasks
+
+    const taskCell1 = document.createElement("td"); //creates the td for the task
+    taskCell1.width = "2%"; //sets the width of the task cell
+
+
+    const taskImgDiv = document.createElement("div"); //creates a div for the add task button
+    const taskImg = document.createElement("img"); //clarifies the add task button is an image
+    taskImg.src = "addtask.png"; //link for add task image
+    taskImg.style.height = "20px"; //add task height
+    taskImg.style.width = "20px"; //add task width
+    taskImg.style.paddingLeft = "20px"; //gives the add task button correct padding
+    taskImg.id = "plus-" + numOfLists; //gives add task button id based on list number
+    taskImg.classList.add("plus"); //makes sure the css class is applied to the add task button from style.css
+    taskImgDiv.appendChild(taskImg); //adds add task to the div
+    taskCell1.appendChild(taskImgDiv); //adds add task button to the the first cell in this row
+
+    // Task management functions...
+    function toggleTextField() {
+        // Toggle the visibility of the image and text field
+        if (taskImg.style.display !== "none") {
+            textField.style.display = "inline-block";
+            textField.focus();
+        } else {
+            textField.style.display = "none";
+        }
+    }
+
+
+    taskImg.addEventListener("click", toggleTextField);
+
+
+    const taskCell2 = document.createElement("td"); //creates column for the task user input
+    taskCell2.width = "53%"; //makes sure the input takes up the right width of the screen
+    const textField = document.createElement("input"); //sets up the text input
+    textField.type = "text"; //clarifies the input from user is text
+    textField.style.backgroundColor = color; //gives the input box the correct background color
+    textField.id = "description-" + numOfLists; //gives the description for this task the correct id
+    textField.classList.add("description"); //adds correct class to task id
+    textField.name = "description"; //sets the name of the textfield
+    taskCell2.appendChild(textField); //adds the input box to the second cell in this row
+
+
+    const taskCell3 = document.createElement("td"); //creates a column for where tasks will be stored
+    taskCell3.width = "45%"; //makes sure tasks take up the correct width on the page
+    const listTestDiv = document.createElement("div"); //creates a div for this cell
+    listTestDiv.id = "listTest-" + numOfLists; //gives the correct id
+    listTestDiv.style.marginRight = "20px"; //styles the task correctly
+    taskCell3.appendChild(listTestDiv); //adds task div to the correct cell in this row
+
+
+    taskRow.appendChild(taskCell1); //adds add task button to first cell in table row
+    taskRow.appendChild(taskCell2); //adds input box to second cell in table row
+    taskRow.appendChild(taskCell3); //adds task list to third cell in table row
+
+
+    titleCell.appendChild(toggleTitleBtn); //adds the toggleTitleBtn to the title cell
+    titleCell.appendChild(titleInput); //adds the title input to the title cell
+    titleRow.appendChild(titleCell); //adds the title cell to the title row
+    table.appendChild(settingsRow); //adds the settings row to the table
+    table.appendChild(titleRow); //adds the title row to the table
+    table.appendChild(taskRow); //adds the task row to the table
+    list.appendChild(table); //adds the table to the list
+
+    // Add event listener for mouseover on the settings row
+    settingsRow.addEventListener('mouseover', function () {
+        // Show the setting button
+        settingBtnDiv.classList.remove('hidden');
+        settingBtnDiv.style.textAlign = "center";
+    });
+
+
+    // Add event listener for mouseout on the settings row
+    settingsRow.addEventListener('mouseout', function () {
+        // Hide the setting button
+        settingBtnDiv.classList.add('hidden');
+    });
+
+
+    // Add event listener for mouseover on the title row
+    titleRow.addEventListener('mouseover', function () {
+        // Show the toggle title button
+        toggleTitleBtn.classList.remove('hidden');
+    });
+
+
+    // Add event listener for mouseout on the title row
+    titleRow.addEventListener('mouseout', function () {
+        // Hide the toggle title button
+        toggleTitleBtn.classList.add('hidden');
+    });
+
+    // Add event listener for mouseout on the title row
+    toggleTitleBtn.addEventListener('click', function () {
+        // Hide the toggle title button
+        titleInput.classList.toggle('hidden');
+    });
+
+    listContainer.appendChild(list); //adds the list to the list container
+
+    document.body.appendChild(listContainer); //adds the list container to the document body
+
+    addTabButtonEventListener(tabButton, numOfLists, table, taskCell3); //checks if the add list button is clicked
+
+    addInputFieldEventListener(titleInput, numOfLists); //checks if the title input box is altered
+
+    addTaskInputEventListener(textField, numOfLists, taskCell3);
+
+    addSettingButtonEventListener(numOfLists, listID);
+
+    // Push the list data to the listArray
+
+    const isExisting = listArray.some(item => item.id === list.id);
+    if (!isExisting) {
+        listArray.push({ id: list.id });
+    }
+
+    // Save the updated listArray to Chrome storage
+    chrome.storage.local.set({ listArray: listArray }, function () {
+        console.log('listArray saved to Chrome storage');
+    });
+
+}
+
+function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) {
+    tabButton.addEventListener('click', function () {
+        const table = document.getElementById("list" + numOfLists).querySelector('table');
+        table.classList.toggle("hidden");
+        console.log('Button clicked');
+
+        // Update listToggles with toggle state
+        listToggles['list' + numOfLists] = !table.classList.contains("hidden");
+
+        // Save updated listToggles object to Chrome storage
+        chrome.storage.local.set({ listToggle: listToggles }, function () {
+            console.log('Toggle state saved for ' + numOfLists);
+        });
+    });
+
+    // Populate task containers based on the current state of taskArrays
+    if (!table.classList.contains("hidden")) {
+        const taskArray = taskArrays['list' + numOfLists] || [];
+        taskArray.forEach(function (task) {
+            const taskContainer = document.createElement("div"); //creates a task container div
+            taskContainer.className = "task-container"; //gives the task container a className
+            taskContainer.style.display = "flex"; //makes sure the task container is styled correctly
+
+            //taskContainer.style.display = "flex"; //makes sure the task container is styled correctly
+            //taskContainer.style.flexDirection = "column"; //makes sure the task container is styled correctly
+            const taskID = task.id; //generates a unique task id
+
+            const taskParagraph = document.createElement("p"); //creates a p element to store task
+            var checkLink = task.description;
+            checkLink = detectAndMakeClickable(checkLink);
+
+            function detectAndMakeClickable(checkLink) {
+                var urlRegex = /((?:https?|ftp):\/\/[^\s]+)/g;
+                return checkLink.replace(urlRegex, function (url) {
+                    var link = document.createElement('a');
+                    link.href = url;
+                    link.textContent = url;
+                    link.className = 'clickable-link';
+                    link.target = '_blank'; // Open link in a new tab
+                    return link.outerHTML;
                 });
-                // adds the div into the list
-                list.appendChild(newDiv);
+            }
+
+            taskParagraph.innerHTML = checkLink; //adds task as a paragraph
+
+            const completeImage = document.createElement("img"); //creates an image to appear next to task (the done button)
+            completeImage.src = 'bird.png'; //gives the button the correct link
+            completeImage.alt = 'Your task is not done yet!'; //alt text
+            completeImage.height = 50; //sets height of done button
+            completeImage.width = 60; //sets width of done button
+            completeImage.style.paddingLeft = "50px"; //makes sure done button is styled correctly
+
+            const hoverImagePath = birdArray[1]; //the link for the image to appear on hover
+
+            completeImage.addEventListener('mouseover', function () { //checks if image is currently being hovered on
+                completeImage.src = hoverImagePath; //changes the done task button accordingly
+            });
+
+            completeImage.addEventListener('mouseout', function () { //checks for when the user hovers off the button
+                completeImage.src = 'bird.png'; //sets the button back to its original image
+            });
+
+            completeImage.addEventListener('click', function () { //checks if the done button is clicked
+                taskContainer.remove(); //removes the container ?
+                const index = taskArrays['list' + numOfLists].findIndex(task => task.id === taskID); //gets the index of the current task
+                if (index !== -1) { //makes sure the index is valid
+                    taskArrays['list' + numOfLists].splice(index, 1); //shifts the array ?
+
+                    chrome.storage.local.set({ taskArrays: taskArrays }, function () {
+                        console.log('Task removed for list ' + numOfLists);
+                    });
+                }
+            });
+
+            taskContainer.appendChild(taskParagraph); //adds the task paragraph to the task container
+            taskContainer.appendChild(completeImage); //adds the done button to the task container
+            taskCell3.appendChild(taskContainer); //adds the task to the correct table cell
+        });
+    }
+}
+
+function addInputFieldEventListener(titleInput, numOfLists) {
+    titleInput.addEventListener('input', function (event) {
+        // Retrieve the value of the input box when the event is triggered
+        const inputValue = event.target.value;
+
+        // Update inputValues object with the new value
+        inputValues['list' + numOfLists] = inputValue;
+
+        // Save the updated inputValues object to Chrome storage
+        chrome.storage.local.set({ inputValues: inputValues }, function () {
+            console.log('Input value saved for list ' + numOfLists + ':', inputValue);
+        });
+    });
+}
+
+function addTaskInputEventListener(textField, numOfLists, taskCell3) {
+    textField.addEventListener("keypress", function (event) {
+        if (event.keyCode === 13) { // Check if Enter key is pressed
+            const value = textField.value.trim(); //retrieves the text from the texfield
+            if (value !== '') { //checks that a task has been entered into the input box
+                const taskID = Date.now(); //generates a unique task id
+                const taskDescription = "• " + value; //sets the task description to the text entered by user
+
+                const taskContainer = document.createElement("div"); //creates a task container div
+                taskContainer.className = "task-container"; //gives the task container a className
+                taskContainer.style.display = "flex"; //makes sure the task container is styled correctly
+
+                const taskParagraph = document.createElement("p"); //creates a p element to store task
+                var checkLink = taskDescription;
+                checkLink = detectAndMakeClickable(checkLink);
+
+                function detectAndMakeClickable(checkLink) {
+                    var urlRegex = /((?:https?|ftp):\/\/[^\s]+)/g;
+                    return checkLink.replace(urlRegex, function (url) {
+                        var link = document.createElement('a');
+                        link.href = url;
+                        link.textContent = url;
+                        link.className = 'clickable-link';
+                        link.target = '_blank'; // Open link in a new tab
+                        return link.outerHTML;
+                    });
+                }
+
+                taskParagraph.innerHTML = checkLink; //adds task as a paragraph
+
+                const completeImage = document.createElement("img"); //creates an image to appear next to task (the done button)
+                completeImage.src = 'bird.png'; //gives the button the correct link
+                completeImage.alt = 'Your task is not done yet!'; //alt text
+                completeImage.height = 50; //sets height of done button
+                completeImage.width = 60; //sets width of done button
+                completeImage.style.paddingLeft = "50px"; //makes sure done button is styled correctly
+
+                const hoverImagePath = birdArray[1]; //the link for the image to appear on hover
+
+                completeImage.addEventListener('mouseover', function () { //checks if image is currently being hovered on
+                    completeImage.src = hoverImagePath; //changes the done task button accordingly
+                });
+
+                completeImage.addEventListener('mouseout', function () { //checks for when the user hovers off the button
+                    completeImage.src = 'bird.png'; //sets the button back to its original image
+                });
+
+                completeImage.addEventListener('click', function () { //checks if the done button is clicked
+                    taskContainer.remove(); //removes the container ?
+                    const index = taskArrays['list' + numOfLists].findIndex(task => task.id === taskID); //gets the index of the current task
+                    if (index !== -1) { //makes sure the index is valid
+                        taskArrays['list' + numOfLists].splice(index, 1); //shifts the array ?
+
+                        chrome.storage.local.set({ taskArrays: taskArrays }, function () {
+                            console.log('Task removed for list ' + numOfLists);
+                        });
+                    }
+                });
+
+                taskContainer.appendChild(taskParagraph); //adds the task paragraph to the task container
+                taskContainer.appendChild(completeImage); //adds the done button to the task container
+
+                taskCell3.appendChild(taskContainer); //adds the task to the correct table cell
+
+                taskArrays['list' + numOfLists] = taskArrays['list' + numOfLists] || [];
+                taskArrays['list' + numOfLists].push({ id: taskID, description: taskDescription }); //push the tasks from this list into the array
+
+                chrome.storage.local.set({ taskArrays: taskArrays }, function () { //makes sure the task array data is saved in chrome
+                    console.log('Task added for list ' + numOfLists); //statement to see if the above line works ^
+                });
+
+                textField.value = ''; //clear the text field after a task is entered
             }
         }
     });
-};
-
-
-
-var list = document.getElementById("listTest");
-
-
-// This code removes the default text in the user input box on the main page.
-// When you click on the text field, "Add task here!" disappears.
-var textField1 = document.getElementById("description");
-textField1.onfocus = function() {
-    if(this.value === 'Add task here!') {
-        this.value = '';
-    }
 }
 
+function addSettingButtonEventListener(numOfLists, listID) {
+    const listContainer = document.getElementById("list-container-" + numOfLists);
+    const tabBtn = document.getElementById("tab" + numOfLists);
+    const listTable = document.getElementById("table-" + numOfLists);
+    const listTask = document.getElementById("description-" + numOfLists);
+    const listTitle = document.getElementById("title-input-" + numOfLists);
+    const modalTrigger = document.getElementById("setting-btn-" + numOfLists);
+    const modal = document.createElement("div");
+    modal.id = "modal-" + numOfLists;
+    modal.classList.add("modal");
+    modal.classList.add("hidden");
+    const colorTheme = document.createElement("input");
+    colorTheme.type = "color";
+    colorTheme.id = "color-picker-" + numOfLists;
+    colorTheme.style.display = "block";
+    colorTheme.style.margin = "20px";
 
-// Creates a date object for today.
-let today = new Date();
+    const deleteBtn = document.createElement("button"); //add a delete button to the modal
+    deleteBtn.style.height = "70px";
+    deleteBtn.style.width = "200px";
+    deleteBtn.style.display = "block";
+    deleteBtn.id = "delete-" + numOfLists;
+    deleteBtn.style.margin = "20px";
+    deleteBtn.textContent = "delete list " + numOfLists + ". PERMANENT!";
 
-// Creates variables for the 3 date text fields on the main page.
-var dayTextField = document.getElementById("day");
-var monthTextField = document.getElementById("month");
-var yearTextField = document.getElementById("year");
+    deleteBtn.addEventListener("click", function () {
+        listContainer.remove();
+        tabBtn.remove();
+        console.log("before: " + listArray);
+        console.log("this is the length of the array: " + listArray.length);
 
-// Makes the default values for each of the three text fields todays
-// day, month, and year
-day.value = today.getDate();
-month.value = today.getMonth() + 1;
-year.value = today.getFullYear();
+        const index = listArray.findIndex(item => item.id === listID); //gets the index of the current list?
+        if (index != -1) {
+            console.log("after: " + listArray);
 
-
-// for the 3 text fields, makes it so when you click on them and their values
-// match todays values, they disappear
-dayTextField.onfocus = function() {
-    if(this.value == today.getDate()) {
-        this.value = '';
-    }
-}
-
-monthTextField.onfocus = function() {
-    if(this.value == (today.getMonth() + 1)) {
-        this.value = '';
-    }
-}
-
-yearTextField.onfocus = function() {
-    if(this.value == today.getFullYear()) {
-        this.value = '';
-    }
-}
-
-
-// This code runs every time the "Add task" button is clicked
-// It generates a new to do list item every time the button is clicked.
-document.getElementById("listButton").addEventListener("click", function() {
-
-
-    // creates variables for each of the 3 text fields on the main page
-    var dayTextField = document.getElementById("day");
-    var monthTextField = document.getElementById("month");
-    var yearTextField = document.getElementById("year");
-
-    // saves each of the values of the text field to a variable and tries
-    // to cast then to an number
-    var dueDay = Number(dayTextField.value);
-    var dueMonth = Number(monthTextField.value);
-    var dueYear = Number(yearTextField.value);
-
-    // Resets the default values of each text field to todays values.
-    day.value = today.getDate();
-    month.value = today.getMonth() + 1;
-    year.value = today.getFullYear();
-
-    // Creates a boolean check to see if any of the date objects are not numbers
-    var allValidInputsDate = (!isNaN(dueDay)) && (!isNaN(dueMonth)) && (!isNaN(dueYear));
-
-    // makes the due date default to today (this will only occur if one of the due times is NaN)
-    var dueDateObj = today;
-
-    // if none of them are NaN, build a date object with the users inputs
-    if (allValidInputsDate) {
-        dueDateObj = new Date(dueYear, dueMonth - 1, dueDay);
-    }
+            /*  if (index != listArray.length - 1) { // Check if the deleted list is not the first list
+  
+                  for (let k = listArray.length; k > index; k--) {
+                      moveListSettings(k, k + 1);
+                  }
+                  // Remove the last list since it's now empty
+                  const lastIndex = listArray.length - 1;
+  
+                  // Remove the last list from listArray
+                  listArray.splice(lastIndex, 1);
+              } else { */
+            listArray.splice(index, 1);
+            //}
 
 
-
-    // Creates a new text field object based on the contents of the index page text field.
-    // The value variable contains the text the user enters (or "Enter task here!" if they
-    // don't enter anything). Finally, it resets the value of the text field back to "Add task
-    // here!"
-    var textField = document.getElementById("description");
-    var value = textField.value;
-    textField.value = "Add task here!";
-
-
-    // Creates a new paragraph tag variable. Sets changes the value of the paragraph tag to what the user put
-    // in the text field. Sets style.display to "inline-block" so the button and paragraph tag will
-    // show up next to each other.
-    var newElement = document.createElement("p");
-    newElement.id = counter1; // Stores the ID in the newElement
-    newElement.textContent = "Task: " + value;
-    newElement.style.display = "inline-block";
-
-
-    // Creates a new button variable. The text that appears on the button says "Completed!". The style.display
-    // to "inline-block" so the button and paragraph tag will show up next to each other.
-    var newButton = document.createElement("button");
-    newButton.textContent = "Completed!";
-    newButton.style.display = "inline-block";
-
-
-    // Adds an event listener to the newly generated button variable. When the button is clicked, it will delete
-    // the itself and its corresponding paragraph tag. (In the code, parentNode describes the div that is created
-    // in the next code block). Also deletes the tasks from local storage. Also deletes the due date from local
-    // storage
-    newButton.addEventListener("click", function() {
-        delete dueDates[newElement.id];
-        chrome.storage.local.set({ dueDates: dueDates }, function() {
-            console.log('Due dates updated');
-        });
-        newDiv.parentNode.removeChild(newDiv);
-        let index = taskArray.findIndex(task => task.id === parseInt(newElement.id));
-        if (index !== -1) {
-            taskArray.splice(index, 1);
+            chrome.storage.local.set({ listArray: listArray }, function () {
+                console.log('list ' + numOfLists + ' removed');
+                console.log("this is the length of the array: " + listArray.length);
+                console.log(listArray);
+            });
         }
+    });
 
-        chrome.storage.local.set({ taskArray: taskArray }, function() {
-            console.log('Task Array updated');
+    modal.appendChild(colorTheme);
+    modal.appendChild(deleteBtn);
+
+    document.body.appendChild(modal);
+    colorTheme.addEventListener('input', function (event) {
+        // Get the selected color value
+        const selectedColor = event.target.value;
+        listTable.style.backgroundColor = selectedColor;
+        listTask.style.backgroundColor = selectedColor;
+        listTitle.style.backgroundColor = selectedColor;
+        tabBtn.style.backgroundColor = selectedColor;
+        listColors[numOfLists] = selectedColor;
+        chrome.storage.local.set({ 'listColors': listColors }, function () {
+            console.log('Color saved for list ' + numOfLists + ':', selectedColor);
         });
     });
 
-    // the key of the new element id is linked to the string form of the date
-    dueDates[newElement.id] = dueDateObj.toDateString();
 
-    // updates the due dates to include the new value
-    chrome.storage.local.set({ dueDates: dueDates }, function() {
-        console.log('Due dates updated');
+    // Add event listener to the modal trigger
+    modalTrigger.addEventListener("click", function () {
+        event.stopPropagation();
+        modal.classList.toggle("hidden");
     });
 
-    // creates a new paragraph element that appears new to the task
-    // and displays the due date
-    var dueDateElement = document.createElement("p");
-    dueDateElement.textContent = " || Due: " + dueDates[newElement.id];
-    dueDateElement.style.display = "inline-block";
+    // Function to handle click outside modal
+    function clickOutsideModal(event) {
+        if (!modal.contains(event.target) && event.target !== modalTrigger) {
+            modal.classList.add("hidden");
+        }
+    }
 
-    // Append the new paragraphs and the new button to the list to a div. The button will be displayed first,
-    // and the paragraphs containing the task text and due date will be shown next to it.
-    var newDiv = document.createElement("div");
-    newDiv.appendChild(newButton);
-    newDiv.appendChild(newElement);
-    newDiv.appendChild(dueDateElement);
+    document.body.addEventListener("click", clickOutsideModal);
+
+}
+
+/* function moveListSettings(toListIndex, fromListIndex) {
+    // Move settings from fromListIndex to toListIndex
+    inputValues['list' + toListIndex] = inputValues['list' + fromListIndex];
+    listToggles['list' + toListIndex] = listToggles['list' + fromListIndex];
+    const moveColor = listToggles['list' + fromListIndex]
+
+    const tabBtn = document.getElementById("tab" + fromListIndex);
+    const listTable = document.getElementById("table-" + fromListIndex);
+    const listTask = document.getElementById("description-" + fromListIndex);
+    const listTitle = document.getElementById("title-input-" + fromListIndex);
+
+    listTable.style.backgroundColor = "blue";
+    listTask.style.backgroundColor = "blue";
+    listTitle.style.backgroundColor = "blue";
+    tabBtn.style.backgroundColor = "blue";
 
 
-    // Pushes the new task to the array of tasks. also updates the value of counter1 in storage
-    taskArray.push({ id: counter1, text: newElement.textContent });
-    chrome.storage.local.set({ taskArray: taskArray, counter1: counter1 + 1 }, function() {
-        console.log('Task Array and counter1 updated');
+    // Save the updated settings to Chrome storage
+    chrome.storage.local.set({
+        inputValues: inputValues,
+        listToggles: listToggles,
+        listColors: listColors
+    }, function () {
+        console.log('Settings moved from list ' + fromListIndex + ' to list ' + toListIndex);
     });
-    
-
-    // We now add the div containing the button paragraph to list, that way it appears on the new web page.
-    list.appendChild(newDiv);
-
-    // Increments the total task counter
-    counter1++;
-});
+} //this isn't working */
