@@ -1,7 +1,0 @@
-/*Positioning of the Toggle Fullscreen button*/
-.fullscreen button {
-    position: absolute;
-    left:50%;
-    bottom: 10vh;
-    transform: translate(-50%, 0);
-}
