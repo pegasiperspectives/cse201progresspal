@@ -1,5 +1,5 @@
 const BUTTON = document.querySelector('button')
-const DIV = document.querySelector('div')
+const DIV = document.querySelector('fullscreenDiv')
 
 // Toggle into and out of fullscreen function
 const toggleFullscreen = () => {
