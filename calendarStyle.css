@@ -1,0 +1,44 @@
+.body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+.calendar-container {
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+  }  
+  .calendar th,
+  .calendar td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    width: 50px; /* Adjust the width as needed */
+  }
+  .calendar th {
+    background-color: #f2f2f2;
+    height: 30px; /* Adjust the height of the top row */
+  }
+  .calendar td {
+    height: 80px; /* Adjust the height of other rows */
+  }
+  .month-name {
+     text-align: center;
+  }
+  .nav-buttons{ 
+    display: flex;
+    justify-content: space-between;
+  }
+  .nav-buttons button{ 
+    padding: 5px 10px;
+    cursor: pointer;
+  }
