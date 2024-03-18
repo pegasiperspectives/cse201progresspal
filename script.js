@@ -12,7 +12,7 @@ const toggleFullscreen = () => {
         DIV.requestFullscreen()
 }
 
-document.getElementById('toggleFullscreen').addEventListener('click', toggleFullscreen)
+document.getElementById('toggleFullscreen').addEventListener('click', toggleFullscreen())
 
 const onChange = () => {
     DIV.className = document.fullscreenElement ? 'fullscreen' : ''
