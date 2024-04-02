@@ -9,6 +9,7 @@ const toggleFullscreen = () => {
         document.exitFullscreen()
     else
         // If false, we will enter fullscreen on button press
+        chrome.tabs.create({url: "index.html"});
         DIV.requestFullscreen()
 }
 
