@@ -1,0 +1,439 @@
+body {
+    width: 700px;
+    height: 500px;
+    margin: 0;
+    padding: 20px;
+    padding-top: 200px;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    background: var(--clr-body-bg);
+    color: var(--clr-text);
+    font-family: myFirstFont;
+}
+
+:root {
+    --clr-body-bg: hsl(0.1 39% 69%);
+    --clr-card-bg: hsl(0 0% 100%);
+    --clr-text: hsl(0 0% 15%);
+    --clr-heading: hsl(0 0% 25%);
+}
+
+/* Style for clickable link */
+.clickable-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.topmostRow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--clr-heading);
+    line-height: 1.1;
+}
+
+.auto-grid {
+    --min-column-size: 225px;
+
+    display: grid;
+    gap: clamp(1rem, 5vmax, 1.625rem);
+    grid-template-columns: repeat(auto-fit,
+            minmax(min(100%, var(--min-column-size)), 1fr));
+}
+
+.wrapper {
+    --max-width: 55rem;
+    width: min(100% - 2rem, var(--max-width));
+    margin-inline: auto;
+}
+
+.card {
+    padding: 1rem;
+    background-color: var(--clr-card-bg);
+    border-block-start: 0.5rem solid;
+    border-radius: 0.5rem;
+}
+
+table {
+    width: 100%;
+    /* border: solid;
+         border-color: black; 
+        border-width: 10px; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    overflow-wrap: break-word;
+}
+
+.description {
+    vertical-align: top;
+    /* Align elements to the top */
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    background: var(--clr-body-bg);
+    color: black;
+    outline: none;
+    font-family: myFirstFont;
+    font-size: 60px;
+}
+
+.titleStyle {
+    font-family: myFirstFont;
+    font-size: 60px;
+    background: var(--clr-body-bg);
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+@font-face {
+    font-family: myFirstFont;
+    src: url(CANDY___.otf);
+}
+
+@font-face {
+    font-family: listTitle;
+    src: url(Slabthing-YvLL.ttf);
+}
+
+p {
+    font-weight: bold;
+}
+
+
+td,
+tr {
+    height: 90px;
+    /* border: solid;
+        border-color: black; 
+        border-width: 10px; */
+}
+
+
+.card>* {
+    margin: 0;
+}
+
+.card>*:not(:last-child) {
+    margin-bottom: 0.75rem;
+}
+
+.visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.color-picker>fieldset {
+    border: 0;
+    display: flex;
+    gap: 2rem;
+    width: fit-content;
+    background: #fff;
+    padding: 1rem 3rem;
+    margin-inline: auto;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.color-picker input[type="radio"] {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    outline: 3px solid var(--radio-color, currentColor);
+    outline-offset: 3px;
+    border-radius: 50%;
+}
+
+.color-picker input[type="radio"]:checked {
+    background-color: var(--radio-color);
+}
+
+.color-picker input[type="radio"]#light {
+    --radio-color: gray;
+}
+
+.color-picker input[type="radio"]#pink {
+    --radio-color: pink;
+}
+
+.color-picker input[type="radio"]#blue {
+    --radio-color: blue;
+}
+
+.color-picker input[type="radio"]#green {
+    --radio-color: green;
+}
+
+.color-picker input[type="radio"]#dark {
+    --radio-color: #232323;
+}
+
+.pink {
+    --clr-body-bg: hsl(310 50% 90%);
+    --clr-card-bg: hsl(310 50% 100%);
+    --clr-text: hsl(310 50% 15%);
+    --clr-heading: hsl(310 50% 25%);
+}
+
+.blue {
+    --clr-body-bg: hsl(209 50% 90%);
+    --clr-card-bg: hsl(209 50% 100%);
+    --clr-text: hsl(209 50% 15%);
+    --clr-heading: hsl(209 50% 25%);
+}
+
+.green {
+    --clr-body-bg: hsl(109 50% 90%);
+    --clr-card-bg: hsl(109 50% 100%);
+    --clr-text: hsl(109 50% 15%);
+    --clr-heading: hsl(109 50% 25%);
+}
+
+.dark {
+    --clr-body-bg: hsl(209 50% 10%);
+    --clr-card-bg: hsl(209 50% 5%);
+    --clr-text: hsl(209 50% 90%);
+    --clr-heading: hsl(209 50% 80%);
+}
+
+:root:has(#pink:checked) {
+    --clr-body-bg: hsl(310 50% 90%);
+    --clr-card-bg: hsl(310 50% 100%);
+    --clr-text: hsl(310 50% 15%);
+    --clr-heading: hsl(310 50% 25%);
+}
+
+:root:has(#blue:checked) {
+    --clr-body-bg: hsl(209 50% 90%);
+    --clr-card-bg: hsl(209 50% 100%);
+    --clr-text: hsl(209 50% 15%);
+    --clr-heading: hsl(209 50% 25%);
+}
+
+:root:has(#green:checked) {
+    --clr-body-bg: hsl(109 50% 90%);
+    --clr-card-bg: hsl(109 50% 100%);
+    --clr-text: hsl(109 50% 15%);
+    --clr-heading: hsl(109 50% 25%);
+}
+
+:root:has(#dark:checked) {
+    --clr-body-bg: hsl(209 50% 10%);
+    --clr-card-bg: hsl(209 50% 5%);
+    --clr-text: hsl(209 50% 90%);
+    --clr-heading: hsl(209 50% 80%);
+}
+
+.collapsible {
+    cursor: pointer;
+    padding: 18px;
+    border: none;
+    text-align: center;
+    outline: none;
+    font-size: 15px;
+}
+
+.content {
+    padding: 0px 18px;
+    display: none;
+    overflow: hidden;
+}
+
+.modal {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 5px;
+    height: 300px;
+    width: 400px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20000;
+}
+
+#setting-btn {
+    position: relative;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    /* border: solid;
+        border-width: 2px;
+        border-color: black; */
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Ensure the modal is a square */
+    background-color: #fefefe;
+    border-radius: 5px;
+    padding: 20px;
+    z-index: 200000;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.titleStyle::placeholder {
+    color: black;
+    /* Change the color to black */
+}
+
+/*This is the css file that makes the nav bar look good,
+Credit to w3schools navbar article*/
+
+/*This is the CSS styling that makes the navbar appear horizontally*/
+.navBar {
+    list-style-type: none;
+    /* Prevent buttons from wrapping */
+    /* Align buttons to the left and right */
+    /* Align buttons to the top */
+    z-index: 1000;
+    position: fixed;
+    display: inline-block;
+    /* Fix the navbar position */
+    top: 0;
+    left: 0;
+    width: 700px;
+    /* Place it at the top of the viewport */
+}
+
+.navBarLink {
+    display: inline-block;
+    /* Change display to block to take up full width */
+    background-color: #dddddd;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    width: 100%;
+    color: black;
+    text-decoration: none;
+    height: 50px;
+    line-height: 50px;
+    /* Center the text vertically */
+    margin: 0;
+    /* Remove any default margin */
+}
+
+.navBarItem {
+    width: 33%;
+    display: inline-block;
+}
+
+.navBarLink.active {
+    background-color: pink;
+}
+
+.navBarLink:hover {
+    background-color: purple;
+}
+
+/* Adjust the width of the calendar container 
+body {
+    width: 700px;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    background: var(--clr-body-bg);
+    color: var(--clr-text);
+  } */
+/* Adjust the width of the calendar container */
+
+/* .calendar-container {
+    width: 50%; 
+    margin: 0 auto; /* Center the calendar horizontally 
+    text-align: center;
+   } */
+
+/* Adjust the width of the calendar table */
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    /* Set a minimum width for the table 
+    min-width: 420px; /* Adjust the width as needed */
+}
+
+/* Adjust the width of the calendar cells */
+.calendar th,
+.calendar td {
+    padding: 15px;
+    /* Increase the padding for better spacing */
+    border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    /* Adjust the width of the cells */
+    width: 60px;
+    /* Adjust the width as needed */
+    height: 60px;
+}
+
+.calendar th {
+    background-color: #f2f2f2;
+    height: 20px;
+    /* Adjust the height of the top row */
+}
+
+/*makes the days appear on the top right and adjusts the cells height*/
+.calendar td {
+    padding: 10px;
+    text-align: right;
+    vertical-align: top;
+    position: relative;
+    height: 55px;
+    /* Adjust the height of other rows */
+}
+
+
+/* Ensure the month name is centered */
+.month-name {
+    text-align: center;
+}
+
+/* Style the navigation buttons */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    /* Add some space below the navigation buttons */
+}
+
+.nav-buttons button {
+    padding: 8px 15px;
+    cursor: pointer;
+}
