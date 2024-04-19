@@ -242,7 +242,6 @@ document.getElementById("listButton").addEventListener("click", function() {
     // and displays the due date
     var dueDateElement = document.createElement("p");
     dueDateElement.textContent = " || Due: " + dueDates[newElement.id];
-    dueDateElement.style.display = "inline-block";
 
     // Append the new paragraphs and the new button to the list to a div. The button will be displayed first,
     // and the paragraphs containing the task text and due date will be shown next to it.
