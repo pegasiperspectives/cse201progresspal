@@ -9,21 +9,23 @@ function generateCalendar(year, month) {
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
 
-  chrome.storage.local.get(['dueDates'], function(result) {
-    const dueDates = result.dueDates || {};
+  chrome.storage.local.get(['taskArrays'], function(result) {
+    const taskArrays = result.taskArrays || {};
 
     // Object to store task count per day
-    const taskCountPerDay = {}; 
+    const taskCountPerDay = {};
 
-    // Loop through dueDates and count tasks for each day
-    for (const [taskId, dueDate] of Object.entries(dueDates)) {
-      const dueDateObj = new Date(dueDate); // Convert the string to a Date object
-      const dueDay = dueDateObj.getDate(); // Get the day from the Date object
+    // Loop through all task arrays and count tasks for each day
+    for (const [listId, taskArray] of Object.entries(taskArrays)) {
+      for (const task of taskArray) {
+        const dueDate = new Date(task.description.split(" due: ")[1]); // Extract the due date from the task description
+        const dueDay = dueDate.getDate(); // Get the day from the Date object
 
-      // adding how many tasks are for a date
-      if (dueDateObj.getFullYear() === year && dueDateObj.getMonth() === month - 1) {
-        const dayCount = taskCountPerDay[dueDay] || 0;
-        taskCountPerDay[dueDay] = dayCount + 1;
+        // Add the task to the taskCountPerDay object
+        if (dueDate.getFullYear() === year && dueDate.getMonth() === month - 1) {
+          const dayCount = taskCountPerDay[dueDay] || 0;
+          taskCountPerDay[dueDay] = dayCount + 1;
+        }
       }
     }
 
