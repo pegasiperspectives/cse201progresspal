@@ -57,7 +57,7 @@ window.onload = function () { //runs when the page loads
         listColors = result.listColors || {}; //sets up the color array
         dueDates = result.dueDates || {}; //sets up the due data array
         bodyColor = result.bodyColor; //sets the background color of the extension
-        completeButtonSrc = result.completeBtnSrc || "bird.png"; //sets up the complete button
+        completeButtonSrc = result.completeButtonSrc || "bird.png"; //sets up the complete button
         completeButtonDel = result.completeButtonDel || "birdwsunglasses.png"; //sets up the hover & done for complete button
 
         //background color styling for different overall elements on the page
