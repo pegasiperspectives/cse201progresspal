@@ -147,7 +147,7 @@ window.onload = function () { //runs when the page loads
                 completeButtonDel: completeButtonDel,
                 dueDates: result.dueDates || {}
             };
-        
+
             chrome.storage.local.set(storageData, function () {
                 console.log('Storage data updated:', storageData);
             });
@@ -603,6 +603,8 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     modal.id = "modal-" + numOfLists; //gives modal an id based on which list this is
     modal.classList.add("modal"); //add modal to class list
     modal.classList.add("hidden"); //hide emodal on default
+    var colorPickerDiv = document.createElement('div');
+    colorPickerDiv.classList.add('color-picker');
     const colorTheme = document.createElement("input"); //create color picker input
     colorTheme.type = "color"; //specify input is color
     colorTheme.id = "color-picker-" + numOfLists; //give color input an id
@@ -652,7 +654,16 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
         }
     });
 
-    modal.appendChild(colorTheme); //appends the color picker to the list's modal/settings
+    // Create a label for displaying text and styling
+    var colorLabel = document.createElement('label');
+    colorLabel.htmlFor = 'colorInput';
+    colorLabel.textContent = 'Select a color';
+    colorLabel.classList.add('color-label');
+
+    // Append the input and label to the color picker div
+    colorPickerDiv.appendChild(colorTheme);
+    colorPickerDiv.appendChild(colorLabel);
+    modal.appendChild(colorPickerDiv); //appends the color picker to the list's modal/settings
     modal.appendChild(deleteBtn); //appends the delete button to the list's modal/settings
     document.body.appendChild(modal); //appends the modal to the page
 
@@ -663,6 +674,7 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
         listTask.style.backgroundColor = selectedColor; //set the list to this color
         listTitle.style.backgroundColor = selectedColor; //set the list to this color
         tabBtn.style.backgroundColor = selectedColor; //set the list to this color
+        colorLabel.style.backgroundColor = selectedColor;
         listColors[numOfLists] = selectedColor; //updates the color for this list in the array
         chrome.storage.local.set({ 'listColors': listColors }, function () { //saves color of list to storage
             console.log('Color saved for list ' + numOfLists + ':', selectedColor); //outputs whether storage was successful
