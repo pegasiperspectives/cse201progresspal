@@ -666,7 +666,11 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     colorPickerDiv.appendChild(colorLabel);
     modal.appendChild(colorPickerDiv); //appends the color picker to the list's modal/settings
     modal.appendChild(deleteBtn); //appends the delete button to the list's modal/settings
-    document.body.appendChild(modal); //appends the modal to the page
+    document.body.appendChild(modal); //appends the modal to the 
+    
+    colorLabel.addEventListener('click', function() {
+        colorInput.click(); // Trigger click event on hidden color input
+      });
 
     //listens for when the color input is used
     colorTheme.addEventListener('input', function (event) {
