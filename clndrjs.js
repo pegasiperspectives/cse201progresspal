@@ -1,5 +1,5 @@
 let currentYear, currentMonth;
-let popup;
+let popupWindow; // Declare a global variable to store the pop-up window reference
 
 function generateCalendar(year, month) {
   const container = document.getElementById('calendar-container');
@@ -79,10 +79,10 @@ function generateCalendar(year, month) {
           // Check if the current date is today's date
           if (currentDate.toDateString() === today.toDateString()) {
             // If it's today's date, add a cell with the "today" class for styling
-            calendarHTML += `<td class="today">${dayHTML}</td>`;
+            calendarHTML += `<td class="today date-cell" data-date="${currentDate.toDateString()}">${dayHTML}</td>`;
           } else {
             // If it's not today's date, add a cell with the day number
-            calendarHTML += `<td>${dayHTML}</td>`;
+            calendarHTML += `<td class="date-cell" data-date="${currentDate.toDateString()}">${dayHTML}</td>`;
           }
 
           day++;
@@ -100,78 +100,80 @@ function generateCalendar(year, month) {
 
     container.innerHTML = calendarHTML;
 
-    //adds event listeners for dates
-    const dateCell = document.querySelectorAll('.date-cell'); 
-    dateCell.forEach(cell => { 
-      cell.addEventListener('click', function(){ 
-        const clickedDate = this.dataset.date; 
-        popupFunction(clickedDate, taskArrays) 
+    // Add event listener to date cells
+    const dateCells = document.querySelectorAll('.date-cell');
+    dateCells.forEach(cell => {
+      cell.addEventListener('click', function() {
+        const selectedDate = this.dataset.date;
+        showTasksForDate(selectedDate, taskArrays);
       });
     });
   });
 }
 
-// pop up window function that shows tasks due on clicked date
-function popupFunction(date, taskArrays){ 
-  const dateTasks = []; 
-  
-  //loops thru all task arrays and find tasks that are due on clicked date 
-  for(const[listId, taskArray] of Object.entries(taskArrays)) { 
-    for(const task of taskArray){ 
-      const dueDate = new Date(task.description.split("due: ") [1]); //gets due date from task description
-      if(dueDate.toDateString()=== date){ 
-        const taskWODate = task.description.split(" due: ")[0]; //removes due date from task description
-        dateTasks.push(taskWODate); 
+// Function to show tasks for a specific date in a pop-up window
+function showTasksForDate(date, taskArrays) {
+  const tasksForDate = [];
+
+  // Loop through all task arrays and find tasks due on the selected date
+  for (const [listId, taskArray] of Object.entries(taskArrays)) {
+    for (const task of taskArray) {
+      const dueDate = new Date(task.description.split(" due: ")[1]); // Extract the due date from the task description
+      if (dueDate.toDateString() === date) {
+        const taskWithoutDueDate = task.description.split(" due: ")[0]; // Remove the due date from the task description
+        tasksForDate.push(taskWithoutDueDate);
       }
     }
   }
 
-  // reset the pop-up window each click of the date
-  if(popup && !popup.closed){ 
-    popup.close(); 
+  // Reset the pop-up window if it already exists
+  if (popupWindow && !popupWindow.closed) {
+    popupWindow.close();
   }
-  popup = window.open('', 'Tasks Due', 'width= 400, height = 300'); 
-  popup.document.write(`
-    <html> 
-      <head> 
-        <title> Tasks Due on ${date} </title> 
+
+  // Create a new pop-up window or modal
+  popupWindow = window.open('', 'Tasks Due', 'width=400,height=300');
+  popupWindow.document.write(`
+    <html>
+      <head>
+        <title>Tasks Due on ${date}</title>
         <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            padding: 20px; 
-          } 
-          h2{ 
-            margin-top: 0; 
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
           }
-          ul{ 
-            list-style-type: none; 
+          h2 {
+            margin-top: 0;
+          }
+          ul {
+            list-style-type: none;
             padding: 0;
           }
-          li{ 
-            margin-bottom: 5px; 
+          li {
+            margin-bottom: 5px;
           }
         </style>
-        </head> 
-        <body> 
-          <h2> Tasks Due on ${date} </h2>
-          <ul>
+      </head>
+      <body>
+        <h2>Tasks Due on ${date}</h2>
+        <ul>
   `);
 
-  if(dateTasks.length === 0){ 
-    popup.document.write('<li> No Tasks Due </li>'); 
-  } else{ 
-    dateTasks.forEach(task => {
-      popup.document.write(`<li>${task}</li>`);
-    }); 
+  if (tasksForDate.length === 0) {
+    popupWindow.document.write('<li>No tasks due on this date.</li>');
+  } else {
+    tasksForDate.forEach(task => {
+      popupWindow.document.write(`<li>${task}</li>`);
+    });
   }
 
-  popup.document.write(`
-        </ul> 
-      </body> 
+  popupWindow.document.write(`
+        </ul>
+      </body>
     </html>
   `);
-
 }
+
 // Function to navigate to previous month
 function previousMonth() {
   currentMonth--;
@@ -197,6 +199,7 @@ const currentDate = new Date();
 currentYear = currentDate.getFullYear();
 currentMonth = currentDate.getMonth() + 1;
 generateCalendar(currentYear, currentMonth);
+
 // Attach event listeners to the navigation buttons
 document.getElementById('prev-month').addEventListener('click', previousMonth);
 document.getElementById('next-month').addEventListener('click', nextMonth);
