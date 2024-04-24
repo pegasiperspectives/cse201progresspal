@@ -50,12 +50,27 @@ window.onload = function () { //runs when the page loads
         console.log('Data retrieved:', result); //to ensure that in inspect mode you can see if the correct data is present
 
         //housekeeping & setting up defaults
-        listArray = result.listArray || []; //sets up the listArray
-        inputValues = result.inputValues || {}; //sets up the title input array
-        listToggles = result.listToggle || {}; //sets up the toggle state of lists array
-        taskArrays = result.taskArrays || {}; //sets up the array of taskArrays
-        listColors = result.listColors || {}; //sets up the color array
-        dueDates = result.dueDates || {}; //sets up the due data array
+        listArray = result.listArray || [];
+        inputValues = result.inputValues || {};
+        listToggles = result.listToggle || {};
+        taskArrays = result.taskArrays || {};
+        listColors = result.listColors || {};
+        dueDates = result.dueDates || {};
+
+        // Reset numOfLists to the current length of listArray
+        numOfLists = listArray.length;
+
+        // Remove any existing lists from the UI
+        const tabContainer = document.getElementById("tab-container");
+        while (tabContainer.firstChild) {
+            tabContainer.removeChild(tabContainer.firstChild);
+        }
+
+        // Recreate the lists based on the retrieved data
+        listArray.forEach((item, index) => {
+            createNewList(index + 1);
+        });
+        
         bodyColor = result.bodyColor; //sets the background color of the extension
         completeButtonSrc = result.completeButtonSrc || "bird.png"; //sets up the complete button
         completeButtonDel = result.completeButtonDel || "birdwsunglasses.png"; //sets up the hover & done for complete button
