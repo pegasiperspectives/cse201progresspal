@@ -140,6 +140,35 @@ tr {
     width: 1px;
 }
 
+.color-picker {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .color-input {
+    visibility: hidden;
+    position: absolute;
+  }
+  
+  .color-label {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #ccc;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .color-label::after {
+    content: "\25BC"; /* down arrow */
+    margin-left: 8px;
+  }
+  
+  .color-input:focus + .color-label {
+    outline: 2px solid blue; /* add focus style if needed */
+  }
+  
+
 .color-picker>fieldset {
     border: 0;
     display: flex;
