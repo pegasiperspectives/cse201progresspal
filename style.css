@@ -152,7 +152,7 @@ tr {
   
   .color-picker {
     position: relative;
-    width: 100%; /* Take up the full width of the parent (modal) */
+    width: 90%; /* Take up the full width of the parent (modal) */
   }
   
   .color-label {
@@ -162,7 +162,7 @@ tr {
     color: #333;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 18px; /* Increase font size for larger text */
+    font-size: 40x; /* Increase font size for larger text */
     width: 100%; /* Take up the full width of the parent (modal) */
     text-align: center; /* Center the text */
   }
