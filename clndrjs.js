@@ -131,8 +131,15 @@ function showTasksForDate(date, taskArrays) {
     popupWindow.close();
   }
 
+  const wndwWidth = window.innerWidth; 
+  const wndwHt = window.innerHeight; 
+  const popupWidth = 400; 
+  const popupHt = 300; 
+  const left = (wndwWidth-popupWidth+ 425 ); 
+  const top = (wndwHt - popupHt+200) / 2; 
+
   // Create a new pop-up window or modal
-  popupWindow = window.open('', 'Tasks Due', 'width=400,height=300');
+  popupWindow = window.open('', 'Tasks Due', `width=${popupWidth},height=${popupHt},left=${left},top=${top}`);
   popupWindow.document.write(`
     <html>
       <head>
