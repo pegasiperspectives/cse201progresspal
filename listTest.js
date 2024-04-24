@@ -609,7 +609,8 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     colorTheme.type = "color"; //specify input is color
     colorTheme.id = "color-picker-" + numOfLists; //give color input an id
     colorTheme.style.display = "block"; //styling
-    colorTheme.style.margin = "20px"; //styling
+    colorTheme.style.visibility = 'hidden'; // Hide the color input
+
 
     const deleteBtn = document.createElement("button"); //add a delete button to the modal
     deleteBtn.style.height = "70px"; //styling
@@ -657,7 +658,7 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     // Create a label for displaying text and styling
     var colorLabel = document.createElement('label');
     colorLabel.htmlFor = 'colorInput';
-    colorLabel.textContent = 'Select a color';
+    colorLabel.textContent = 'Choose color + tab color for this list';
     colorLabel.classList.add('color-label');
 
     // Append the input and label to the color picker div
