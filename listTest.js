@@ -57,6 +57,8 @@ window.onload = function () { //runs when the page loads
         listColors = result.listColors || {};
         dueDates = result.dueDates || {};
 
+        console.log(taskArrays);
+
         // Reset numOfLists to the current length of listArray
         numOfLists = listArray.length;
 
@@ -652,25 +654,15 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
             listArray.splice(index, 1);
 
             // Update the associated data in the storage
-            delete inputValues['list' + numOfLists];
-            delete listToggles['list' + numOfLists];
-            const tasksForList = taskArrays['list' + numOfLists] || [];
-            tasksForList.forEach(task => {
-                const taskIndex = taskArrays['list' + numOfLists].findIndex(t => t.id === task.id);
-                if (taskIndex !== -1) {
-                    taskArrays['list' + numOfLists].splice(taskIndex, 1);
-                }
-            });
-
-            // If the taskArrays for the deleted list is now empty, remove it from the taskArrays object
-            if (taskArrays['list' + numOfLists].length === 0) {
-                delete taskArrays['list' + numOfLists];
-            }
-            delete listColors[numOfLists];
+            delete inputValues['list' + index];
+            delete listToggles['list' + index];
+            delete taskArrays['list' + index];
+            delete listColors[index];
             delete dueDates[textField.id];
 
             numOfLists = listArray.length;
 
+            console.log(taskArrays);
             // Save the updated data to the Chrome storage
             chrome.storage.local.set({
                 listArray: listArray,
@@ -680,7 +672,7 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
                 listColors: listColors,
                 dueDates: dueDates
             }, function () {
-                console.log('List ' + numOfLists + ' removed from storage');
+                console.log('List ' + index + ' removed from storage');
             });
         }
     });
