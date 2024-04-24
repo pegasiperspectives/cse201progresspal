@@ -605,6 +605,7 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     modal.classList.add("hidden"); //hide emodal on default
     var colorPickerDiv = document.createElement('div');
     colorPickerDiv.classList.add('color-picker');
+    colorPickerDiv.style.width = modal.width;
     const colorTheme = document.createElement("input"); //create color picker input
     colorTheme.type = "color"; //specify input is color
     colorTheme.id = "color-picker-" + numOfLists; //give color input an id
@@ -659,6 +660,7 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     var colorLabel = document.createElement('label');
     colorLabel.htmlFor = 'colorInput';
     colorLabel.textContent = 'Choose color + tab color for this list';
+    colorLabel.fontSize = "30px";
     colorLabel.classList.add('color-label');
 
     // Append the input and label to the color picker div
