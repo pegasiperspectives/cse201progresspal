@@ -669,7 +669,7 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     document.body.appendChild(modal); //appends the modal to the 
     
     colorLabel.addEventListener('click', function() {
-        colorInput.click(); // Trigger click event on hidden color input
+        colorTheme.click(); // Trigger click event on hidden color input
       });
 
     //listens for when the color input is used
