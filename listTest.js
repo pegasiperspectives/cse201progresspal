@@ -135,14 +135,22 @@ window.onload = function () { //runs when the page loads
         completeButtonDel = currentArrayForAnimal[selectElement2.selectedIndex + 1]; //picks the complete button as the option the user clicked
         console.log(completeButtonSrc + ", " + completeButtonDel); //outputs the user's clicked choices
 
-        //saves complete buttons (currently is only semi working)
-        chrome.storage.local.set({ completeButtonSrc: completeButtonSrc }, function () { //sets complete button to storage
-            console.log('complete button set ' + completeButtonSrc); //outputs whether this was successful
-        });
-
-        //saves hover complete buttons (currently is only semi working)
-        chrome.storage.local.set({ completeButtonDel: completeButtonDel }, function () { //sets complete button hover to storage
-            console.log('complete hover button set ' + completeButtonDel); //outputs whether this was successful
+        chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'dueDates'], function (result) {
+            const storageData = {
+                listArray: result.listArray || [],
+                inputValues: result.inputValues || {},
+                listToggle: result.listToggle || {},
+                taskArrays: result.taskArrays || {},
+                listColors: result.listColors || {},
+                bodyColor: result.bodyColor,
+                completeButtonSrc: completeButtonSrc,
+                completeButtonDel: completeButtonDel,
+                dueDates: result.dueDates || {}
+            };
+        
+            chrome.storage.local.set(storageData, function () {
+                console.log('Storage data updated:', storageData);
+            });
         });
     });
 }
