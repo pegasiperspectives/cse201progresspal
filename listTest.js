@@ -647,20 +647,23 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
             listArray.splice(index, 1); //removes list
             //}
 
-            const storageData = {
-                listArray: result.listArray || [],
-                inputValues: result.inputValues || {},
-                listToggle: result.listToggle || {},
-                taskArrays: result.taskArrays || {},
-                listColors: result.listColors || {},
-                bodyColor: result.bodyColor,
-                completeButtonSrc: completeButtonSrc,
-                completeButtonDel: completeButtonDel,
-                dueDates: result.dueDates || {}
-            };
 
-            chrome.storage.local.set(storageData, function () {
-                console.log('Storage data updated:', storageData);
+            chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'dueDates'], function (result) {
+                const storageData = {
+                    listArray: result.listArray || [],
+                    inputValues: result.inputValues || {},
+                    listToggle: result.listToggle || {},
+                    taskArrays: result.taskArrays || {},
+                    listColors: result.listColors || {},
+                    bodyColor: result.bodyColor,
+                    completeButtonSrc: completeButtonSrc,
+                    completeButtonDel: completeButtonDel,
+                    dueDates: result.dueDates || {}
+                };
+    
+                chrome.storage.local.set(storageData, function () {
+                    console.log('Storage data updated:', storageData);
+                });
             });
         }
     });
