@@ -1,4 +1,5 @@
 let currentYear, currentMonth;
+let popup;
 
 function generateCalendar(year, month) {
   const container = document.getElementById('calendar-container');
@@ -98,7 +99,78 @@ function generateCalendar(year, month) {
     `;
 
     container.innerHTML = calendarHTML;
+
+    //adds event listeners for dates
+    const dateCell = document.querySelectorAll('.date-cell'); 
+    dateCell.forEach(cell => { 
+      cell.addEventListener('click', function(){ 
+        const clickedDate = this.dataset.date; 
+        popupFunction(clickedDate, taskArrays) 
+      });
+    });
   });
+}
+
+// pop up window function that shows tasks due on clicked date
+function popupFunction(date, taskArrays){ 
+  const dateTasks = []; 
+  
+  //loops thru all task arrays and find tasks that are due on clicked date 
+  for(const[listId, taskArray] of Object.entries(taskArrays)) { 
+    for(const task of taskArray){ 
+      const dueDate = new Date(task.description.split("due: ") [1]); //gets due date from task description
+      if(dueDate.toDateString()=== date){ 
+        const taskWODate = task.description.split(" due: ")[0]; //removes due date from task description
+        dateTasks.push(taskWODate); 
+      }
+    }
+  }
+
+  // reset the pop-up window each click of the date
+  if(popup && !popup.closed){ 
+    popup.close(); 
+  }
+  popup = window.open('', 'Tasks Due', 'width= 400, height = 300'); 
+  popup.document.write(`
+    <html> 
+      <head> 
+        <title> Tasks Due on ${date} </title> 
+        <style>
+          body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+          } 
+          h2{ 
+            margin-top: 0; 
+          }
+          ul{ 
+            list-style-type: none; 
+            padding: 0;
+          }
+          li{ 
+            margin-bottom: 5px; 
+          }
+        </style>
+        </head> 
+        <body> 
+          <h2> Tasks Due on ${date} </h2>
+          <ul>
+  `);
+
+  if(dateTasks.length === 0){ 
+    popup.document.write('<li> No Tasks Due </li>'); 
+  } else{ 
+    dateTasks.forEach(task => {
+      popup.document.write(`<li>${task}</li>`);
+    }); 
+  }
+
+  popup.document.write(`
+        </ul> 
+      </body> 
+    </html>
+  `);
+
 }
 // Function to navigate to previous month
 function previousMonth() {
