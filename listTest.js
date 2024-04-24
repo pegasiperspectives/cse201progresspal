@@ -647,11 +647,20 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
             listArray.splice(index, 1); //removes list
             //}
 
+            const storageData = {
+                listArray: result.listArray || [],
+                inputValues: result.inputValues || {},
+                listToggle: result.listToggle || {},
+                taskArrays: result.taskArrays || {},
+                listColors: result.listColors || {},
+                bodyColor: result.bodyColor,
+                completeButtonSrc: completeButtonSrc,
+                completeButtonDel: completeButtonDel,
+                dueDates: result.dueDates || {}
+            };
 
-            chrome.storage.local.set({ listArray: listArray }, function () { //save to storage
-                console.log('list ' + numOfLists + ' removed'); //outputs whether was successful
-                console.log("this is the length of the array: " + listArray.length); //outputs new length of array
-                console.log(listArray); //outputs new state of array
+            chrome.storage.local.set(storageData, function () {
+                console.log('Storage data updated:', storageData);
             });
         }
     });
