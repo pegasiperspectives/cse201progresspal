@@ -393,7 +393,7 @@ function createNewList() {
 
     addTaskInputEventListener(textField, numOfLists, taskCell3, today); //checks if the plus button is clicked
 
-    addSettingButtonEventListener(numOfLists, listID); //checks if the setting button on the list is clicked
+    addSettingButtonEventListener(numOfLists, listID, textField); //checks if the setting button on the list is clicked
 
     // Push the list data to the listArray
     const isExisting = listArray.some(item => item.id === list.id); //if list already exists
@@ -592,7 +592,7 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
 }
 
 //event listener for the settings of each list
-function addSettingButtonEventListener(numOfLists, listID) { //parameters for necessary elements of list to edit
+function addSettingButtonEventListener(numOfLists, listID, textField) { //parameters for necessary elements of list to edit
     const listContainer = document.getElementById("list-container-" + numOfLists); //accesses list container for this list
     const tabBtn = document.getElementById("tab" + numOfLists); //accesses the list tab button for this list
     const listTable = document.getElementById("table-" + numOfLists); //accesses the list table for this list
