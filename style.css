@@ -150,14 +150,23 @@ tr {
     position: absolute;
   }
   
+  .color-picker {
+    position: relative;
+    width: 100%; /* Take up the full width of the parent (modal) */
+  }
+  
   .color-label {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 12px 16px; /* Increase padding for larger text */
     background-color: #ccc;
     color: #333;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 18px; /* Increase font size for larger text */
+    width: 100%; /* Take up the full width of the parent (modal) */
+    text-align: center; /* Center the text */
   }
+  
   
   .color-label::after {
     content: "\25BC"; /* down arrow */
