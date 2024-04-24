@@ -135,14 +135,22 @@ window.onload = function () { //runs when the page loads
         completeButtonDel = currentArrayForAnimal[selectElement2.selectedIndex + 1]; //picks the complete button as the option the user clicked
         console.log(completeButtonSrc + ", " + completeButtonDel); //outputs the user's clicked choices
 
-        //saves complete buttons (currently is only semi working)
-        chrome.storage.local.set({ completeButtonSrc: completeButtonSrc }, function () { //sets complete button to storage
-            console.log('complete button set ' + completeButtonSrc); //outputs whether this was successful
-        });
+        chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'dueDates'], function (result) {
+            const storageData = {
+                listArray: result.listArray || [],
+                inputValues: result.inputValues || {},
+                listToggle: result.listToggle || {},
+                taskArrays: result.taskArrays || {},
+                listColors: result.listColors || {},
+                bodyColor: result.bodyColor,
+                completeButtonSrc: completeButtonSrc,
+                completeButtonDel: completeButtonDel,
+                dueDates: result.dueDates || {}
+            };
 
-        //saves hover complete buttons (currently is only semi working)
-        chrome.storage.local.set({ completeButtonDel: completeButtonDel }, function () { //sets complete button hover to storage
-            console.log('complete hover button set ' + completeButtonDel); //outputs whether this was successful
+            chrome.storage.local.set(storageData, function () {
+                console.log('Storage data updated:', storageData);
+            });
         });
     });
 }
@@ -595,11 +603,15 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     modal.id = "modal-" + numOfLists; //gives modal an id based on which list this is
     modal.classList.add("modal"); //add modal to class list
     modal.classList.add("hidden"); //hide emodal on default
+    var colorPickerDiv = document.createElement('div');
+    colorPickerDiv.classList.add('color-picker');
+    colorPickerDiv.style.width = modal.width;
     const colorTheme = document.createElement("input"); //create color picker input
     colorTheme.type = "color"; //specify input is color
     colorTheme.id = "color-picker-" + numOfLists; //give color input an id
     colorTheme.style.display = "block"; //styling
-    colorTheme.style.margin = "20px"; //styling
+    colorTheme.style.visibility = 'hidden'; // Hide the color input
+
 
     const deleteBtn = document.createElement("button"); //add a delete button to the modal
     deleteBtn.style.height = "70px"; //styling
@@ -644,9 +656,23 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
         }
     });
 
-    modal.appendChild(colorTheme); //appends the color picker to the list's modal/settings
+    // Create a label for displaying text and styling
+    var colorLabel = document.createElement('label');
+    colorLabel.htmlFor = 'colorInput';
+    colorLabel.textContent = 'Choose color + tab color for this list';
+    colorLabel.fontSize = "30px";
+    colorLabel.classList.add('color-label');
+
+    // Append the input and label to the color picker div
+    colorPickerDiv.appendChild(colorTheme);
+    colorPickerDiv.appendChild(colorLabel);
+    modal.appendChild(colorPickerDiv); //appends the color picker to the list's modal/settings
     modal.appendChild(deleteBtn); //appends the delete button to the list's modal/settings
-    document.body.appendChild(modal); //appends the modal to the page
+    document.body.appendChild(modal); //appends the modal to the 
+    
+    colorLabel.addEventListener('click', function() {
+        colorTheme.click(); // Trigger click event on hidden color input
+      });
 
     //listens for when the color input is used
     colorTheme.addEventListener('input', function (event) {
@@ -655,6 +681,7 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
         listTask.style.backgroundColor = selectedColor; //set the list to this color
         listTitle.style.backgroundColor = selectedColor; //set the list to this color
         tabBtn.style.backgroundColor = selectedColor; //set the list to this color
+        colorLabel.style.backgroundColor = selectedColor;
         listColors[numOfLists] = selectedColor; //updates the color for this list in the array
         chrome.storage.local.set({ 'listColors': listColors }, function () { //saves color of list to storage
             console.log('Color saved for list ' + numOfLists + ':', selectedColor); //outputs whether storage was successful
