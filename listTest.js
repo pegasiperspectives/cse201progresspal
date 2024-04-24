@@ -60,17 +60,6 @@ window.onload = function () { //runs when the page loads
         // Reset numOfLists to the current length of listArray
         numOfLists = listArray.length;
 
-        // Remove any existing lists from the UI
-        const tabContainer = document.getElementById("tab-container");
-        while (tabContainer.firstChild) {
-            tabContainer.removeChild(tabContainer.firstChild);
-        }
-
-        // Recreate the lists based on the retrieved data
-        listArray.forEach((item, index) => {
-            createNewList(index + 1);
-        });
-        
         bodyColor = result.bodyColor; //sets the background color of the extension
         completeButtonSrc = result.completeButtonSrc || "bird.png"; //sets up the complete button
         completeButtonDel = result.completeButtonDel || "birdwsunglasses.png"; //sets up the hover & done for complete button
@@ -665,9 +654,22 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
             // Update the associated data in the storage
             delete inputValues['list' + numOfLists];
             delete listToggles['list' + numOfLists];
-            delete taskArrays['list' + numOfLists];
+            const tasksForList = taskArrays['list' + numOfLists] || [];
+            tasksForList.forEach(task => {
+                const taskIndex = taskArrays['list' + numOfLists].findIndex(t => t.id === task.id);
+                if (taskIndex !== -1) {
+                    taskArrays['list' + numOfLists].splice(taskIndex, 1);
+                }
+            });
+
+            // If the taskArrays for the deleted list is now empty, remove it from the taskArrays object
+            if (taskArrays['list' + numOfLists].length === 0) {
+                delete taskArrays['list' + numOfLists];
+            }
             delete listColors[numOfLists];
             delete dueDates[textField.id];
+
+            numOfLists = listArray.length;
 
             // Save the updated data to the Chrome storage
             chrome.storage.local.set({
