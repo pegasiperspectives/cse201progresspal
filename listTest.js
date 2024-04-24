@@ -644,26 +644,26 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
                   // Remove the last list from listArray
                   listArray.splice(lastIndex, 1);
               } else { */
-            listArray.splice(index, 1); //removes list
-            //}
+            // Remove the list from the listArray
+            listArray.splice(index, 1);
 
+            // Update the associated data in the storage
+            delete inputValues['list' + numOfLists];
+            delete listToggles['list' + numOfLists];
+            delete taskArrays['list' + numOfLists];
+            delete listColors[numOfLists];
+            delete dueDates[textField.id];
 
-            chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'dueDates'], function (result) {
-                const storageData = {
-                    listArray: result.listArray || [],
-                    inputValues: result.inputValues || {},
-                    listToggle: result.listToggle || {},
-                    taskArrays: result.taskArrays || {},
-                    listColors: result.listColors || {},
-                    bodyColor: result.bodyColor,
-                    completeButtonSrc: completeButtonSrc,
-                    completeButtonDel: completeButtonDel,
-                    dueDates: result.dueDates || {}
-                };
-    
-                chrome.storage.local.set(storageData, function () {
-                    console.log('Storage data updated:', storageData);
-                });
+            // Save the updated data to the Chrome storage
+            chrome.storage.local.set({
+                listArray: listArray,
+                inputValues: inputValues,
+                listToggle: listToggles,
+                taskArrays: taskArrays,
+                listColors: listColors,
+                dueDates: dueDates
+            }, function () {
+                console.log('List ' + numOfLists + ' removed from storage');
             });
         }
     });
@@ -681,10 +681,10 @@ function addSettingButtonEventListener(numOfLists, listID) { //parameters for ne
     modal.appendChild(colorPickerDiv); //appends the color picker to the list's modal/settings
     modal.appendChild(deleteBtn); //appends the delete button to the list's modal/settings
     document.body.appendChild(modal); //appends the modal to the 
-    
-    colorLabel.addEventListener('click', function() {
+
+    colorLabel.addEventListener('click', function () {
         colorTheme.click(); // Trigger click event on hidden color input
-      });
+    });
 
     //listens for when the color input is used
     colorTheme.addEventListener('input', function (event) {
