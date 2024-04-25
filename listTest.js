@@ -636,45 +636,8 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
         console.log("this is the length of the array: " + listArray.length); //check length of list
 
         const index = listArray.findIndex(item => item.id === listID); //gets the index of the current list
-        if (index != -1) { //if index is valid
-            console.log("after: " + listArray); //checks what the list is 
-
-            if (index != listArray.length - 1) { // Check if the deleted list is not the first list
-
-                for (let k = listArray.length; k > index; k--) {
-                    moveListSettings(k);
-                }
-                // Remove the last list since it's now empty
-                const lastIndex = listArray.length - 1;
-
-                // Remove the last list from listArray
-                listArray.splice(lastIndex, 1);
-            } else {
-                // Remove the list from the listArray
-                listArray.splice(index, 1);
-            }
-
-            // Update the associated data in the storage
-            delete inputValues['list' + index];
-            delete listToggles['list' + index];
-            delete taskArrays['list' + index];
-            delete listColors[index];
-            delete dueDates[textField.id];
-
-            numOfLists = listArray.length;
-
-            console.log(taskArrays);
-            // Save the updated data to the Chrome storage
-            chrome.storage.local.set({
-                listArray: listArray,
-                inputValues: inputValues,
-                listToggle: listToggles,
-                taskArrays: taskArrays,
-                listColors: listColors,
-                dueDates: dueDates
-            }, function () {
-                console.log('List ' + index + ' removed from storage');
-            });
+        if (index != 0) {
+            moveListSettings(index);
         }
     });
 
