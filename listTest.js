@@ -642,7 +642,7 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
             if (index != listArray.length - 1) { // Check if the deleted list is not the first list
 
                 for (let k = listArray.length; k > index; k--) {
-                    moveListSettings(k, k + 1);
+                    moveListSettings(k);
                 }
                 // Remove the last list since it's now empty
                 const lastIndex = listArray.length - 1;
@@ -749,6 +749,7 @@ function moveListSettings(fromListIndex) {
     delete listToggles['list' + fromListIndex];
     delete taskArrays['list' + fromListIndex];
     delete listColors[fromListIndex];
+    delete dueDates['description-' + fromListIndex];
 
     // Shift down the remaining lists
     for (let i = fromListIndex + 1; i <= Object.keys(inputValues).length; i++) {
@@ -756,6 +757,18 @@ function moveListSettings(fromListIndex) {
         listToggles['list' + (i - 1)] = listToggles['list' + i];
         taskArrays['list' + (i - 1)] = taskArrays['list' + i];
         listColors[(i - 1)] = listColors[i];
+        dueDates['description-' + (i - 1)] = dueDates['description-' + i];
+
+        const tabBtn = document.getElementById("tab" + i);
+        const listTable = document.getElementById("table-" + i);
+        const listTask = document.getElementById("description-" + i);
+        const listTitle = document.getElementById("title-input-" + i);
+
+        tabBtn.id = "tab" + (i - 1);
+        tabBtn.textContent = "List " + (i - 1);
+        listTable.id = "table-" + (i - 1);
+        listTask.id = "description-" + (i - 1);
+        listTitle.id = "title-input-" + (i - 1);
     }
 
     // Remove the last (now empty) list
@@ -764,22 +777,8 @@ function moveListSettings(fromListIndex) {
     delete listToggles['list' + lastIndex];
     delete taskArrays['list' + lastIndex];
     delete listColors[lastIndex];
+    delete dueDates['description-' + lastIndex];
 
-    // Update the UI elements
-    for (let i = fromListIndex; i < lastIndex; i++) {
-        const tabBtn = document.getElementById("tab" + (i + 1));
-        const listTable = document.getElementById("table-" + (i + 1));
-        const listTask = document.getElementById("description-" + (i + 1));
-        const listTitle = document.getElementById("title-input-" + (i + 1));
-
-        tabBtn.id = "tab" + i;
-        tabBtn.textContent = "List " + i;
-        listTable.id = "table-" + i;
-        listTask.id = "description-" + i;
-        listTitle.id = "title-input-" + i;
-    }
-
-    // Remove the last UI elements
     const lastTabBtn = document.getElementById("tab" + lastIndex);
     const lastListTable = document.getElementById("table-" + lastIndex);
     const lastListTask = document.getElementById("description-" + lastIndex);
@@ -798,7 +797,8 @@ function moveListSettings(fromListIndex) {
         inputValues: inputValues,
         listToggles: listToggles,
         taskArrays: taskArrays,
-        listColors: listColors
+        listColors: listColors,
+        dueDates: dueDates
     }, function () {
         console.log('List ' + fromListIndex + ' deleted and lists shifted down');
     });
