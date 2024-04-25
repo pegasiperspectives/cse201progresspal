@@ -742,18 +742,9 @@ function moveListSettings(fromListIndex) {
     delete listColors[lastIndex];
     delete dueDates['description-' + lastIndex];
 
-    const lastTabBtn = document.getElementById("tab" + lastIndex);
-    const lastListTable = document.getElementById("table-" + lastIndex);
-    const lastListTask = document.getElementById("description-" + lastIndex);
-    const lastListTitle = document.getElementById("title-input-" + lastIndex);
-
-    lastTabBtn.removeChild(lastTabBtn);
-    lastListTable.removeChild(lastListTable);
-    lastListTask.removeChild(lastListTask);
-    lastListTitle.removeChild(lastListTitle);
-
     // Update the numOfLists variable
     numOfLists--;
+    listArray.splice(lastIndex);
 
     // Save the updated settings to Chrome storage
     chrome.storage.local.set({
@@ -764,5 +755,6 @@ function moveListSettings(fromListIndex) {
         dueDates: dueDates
     }, function () {
         console.log('List ' + fromListIndex + ' deleted and lists shifted down');
+        console.log('this is the length of the list: ' + listArray.length);
     });
 }
