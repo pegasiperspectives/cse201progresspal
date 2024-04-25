@@ -747,10 +747,10 @@ function moveListSettings(fromListIndex) {
     const lastListTask = document.getElementById("description-" + lastIndex);
     const lastListTitle = document.getElementById("title-input-" + lastIndex);
 
-    lastTabBtn.parentNode.removeChild(lastTabBtn);
-    lastListTable.parentNode.removeChild(lastListTable);
-    lastListTask.parentNode.removeChild(lastListTask);
-    lastListTitle.parentNode.removeChild(lastListTitle);
+    lastTabBtn.removeChild(lastTabBtn);
+    lastListTable.removeChild(lastListTable);
+    lastListTask.removeChild(lastListTask);
+    lastListTitle.removeChild(lastListTitle);
 
     // Update the numOfLists variable
     numOfLists--;
