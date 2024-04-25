@@ -744,7 +744,7 @@ function scrollFunction() {
 window.addEventListener("scroll", scrollFunction);
 
 //DELETE LIST LOGIC THAT DIDN'T WORK
-/* function moveListSettings(toListIndex, fromListIndex) {
+function moveListSettings(toListIndex, fromListIndex) {
     // Move settings from fromListIndex to toListIndex
     inputValues['list' + toListIndex] = inputValues['list' + fromListIndex];
     listToggles['list' + toListIndex] = listToggles['list' + fromListIndex];
