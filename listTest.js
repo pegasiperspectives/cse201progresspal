@@ -639,19 +639,20 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
         if (index != -1) { //if index is valid
             console.log("after: " + listArray); //checks what the list is 
 
-            /*  if (index != listArray.length - 1) { // Check if the deleted list is not the first list
-  
-                  for (let k = listArray.length; k > index; k--) {
-                      moveListSettings(k, k + 1);
-                  }
-                  // Remove the last list since it's now empty
-                  const lastIndex = listArray.length - 1;
-  
-                  // Remove the last list from listArray
-                  listArray.splice(lastIndex, 1);
-              } else { */
-            // Remove the list from the listArray
-            listArray.splice(index, 1);
+            if (index != listArray.length - 1) { // Check if the deleted list is not the first list
+
+                for (let k = listArray.length; k > index; k--) {
+                    moveListSettings(k, k + 1);
+                }
+                // Remove the last list since it's now empty
+                const lastIndex = listArray.length - 1;
+
+                // Remove the last list from listArray
+                listArray.splice(lastIndex, 1);
+            } else {
+                // Remove the list from the listArray
+                listArray.splice(index, 1);
+            }
 
             // Update the associated data in the storage
             delete inputValues['list' + index];
