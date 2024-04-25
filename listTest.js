@@ -743,30 +743,48 @@ function scrollFunction() {
 // Attach the scroll event listener
 window.addEventListener("scroll", scrollFunction);
 
-//DELETE LIST LOGIC THAT DIDN'T WORK
-function moveListSettings(toListIndex, fromListIndex) {
-    // Move settings from fromListIndex to toListIndex
-    inputValues['list' + toListIndex] = inputValues['list' + fromListIndex];
-    listToggles['list' + toListIndex] = listToggles['list' + fromListIndex];
-    const moveColor = listToggles['list' + fromListIndex]
-
-    const tabBtn = document.getElementById("tab" + fromListIndex);
-    const listTable = document.getElementById("table-" + fromListIndex);
-    const listTask = document.getElementById("description-" + fromListIndex);
-    const listTitle = document.getElementById("title-input-" + fromListIndex);
-
-    listTable.style.backgroundColor = "blue";
-    listTask.style.backgroundColor = "blue";
-    listTitle.style.backgroundColor = "blue";
-    tabBtn.style.backgroundColor = "blue";
-
-
+function moveListSettings(fromListIndex) {
+    // Remove the list from the inputValues and listToggles objects
+    delete inputValues['list' + fromListIndex];
+    delete listToggles['list' + fromListIndex];
+  
+    // Shift down the remaining lists
+    for (let i = fromListIndex + 1; i <= Object.keys(inputValues).length; i++) {
+      inputValues['list' + (i - 1)] = inputValues['list' + i];
+      listToggles['list' + (i - 1)] = listToggles['list' + i];
+    }
+  
+    // Remove the last (now empty) list
+    const lastIndex = Object.keys(inputValues).length;
+    delete inputValues['list' + lastIndex];
+    delete listToggles['list' + lastIndex];
+  
+    // Update the UI elements
+    for (let i = fromListIndex; i < lastIndex; i++) {
+      const tabBtn = document.getElementById("tab" + (i + 1));
+      const listTable = document.getElementById("table-" + (i + 1));
+      const listTask = document.getElementById("description-" + (i + 1));
+      const listTitle = document.getElementById("title-input-" + (i + 1));
+  
+      tabBtn.id = "tab" + i;
+      listTable.id = "table-" + i;
+      listTask.id = "description-" + i;
+      listTitle.id = "title-input-" + i;
+    }
+  
+    // Remove the last UI elements
+    const lastTabBtn = document.getElementById("tab" + lastIndex);
+    const lastListTable = document.getElementById("table-" + lastIndex);
+    const lastListTask = document.getElementById("description-" + lastIndex);
+    const lastListTitle = document.getElementById("title-input-" + lastIndex);
+  
+    lastTabBtn.parentNode.removeChild(lastTabBtn);
+    lastListTable.parentNode.removeChild(lastListTable);
+    lastListTask.parentNode.removeChild(lastListTask);
+    lastListTitle.parentNode.removeChild(lastListTitle);
+  
     // Save the updated settings to Chrome storage
-    chrome.storage.local.set({
-        inputValues: inputValues,
-        listToggles: listToggles,
-        listColors: listColors
-    }, function () {
-        console.log('Settings moved from list ' + fromListIndex + ' to list ' + toListIndex);
+    chrome.storage.local.set({ inputValues: inputValues, listToggles: listToggles }, function () {
+      console.log('List ' + fromListIndex + ' deleted and lists shifted down');
     });
-} //this isn't working */
+  }
