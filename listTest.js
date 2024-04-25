@@ -636,9 +636,7 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
         console.log("this is the length of the array: " + listArray.length); //check length of list
 
         const index = listArray.findIndex(item => item.id === listID); //gets the index of the current list
-        if (index != 0) {
-            moveListSettings(index);
-        }
+        moveListSettings(index);
     });
 
     // Create a label for displaying text and styling
@@ -752,7 +750,8 @@ function moveListSettings(fromListIndex) {
         listToggles: listToggles,
         taskArrays: taskArrays,
         listColors: listColors,
-        dueDates: dueDates
+        dueDates: dueDates,
+        listArray: listArray
     }, function () {
         console.log('List ' + fromListIndex + ' deleted and lists shifted down');
         console.log('this is the length of the list: ' + listArray.length);
