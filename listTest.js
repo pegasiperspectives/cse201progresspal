@@ -629,34 +629,15 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
 
     //keep in mind that currently delete list only works correctly when the last list is deleted, not any before that, 
     //therefore the comments are a bit iffy
-    deleteBtn.addEventListener("click", function () { //runs when button is clicked
-        listContainer.remove(); //remove list
-        tabBtn.remove(); //remove tab button for list
-        console.log("before: " + listArray); //check state of list
-        console.log("this is the length of the array: " + listArray.length); //check length of list
-
-        const index = listArray.findIndex(item => item.id === listID); //gets the index of the current list
-        moveListSettings(index);
-
-        const keysToRemove = [
-            'listArray[' + index + ']',
-            'inputValues[list' + index + ']',
-            'listToggle[list' + index + ']',
-            'taskArrays[list' + index + ']',
-            'listColors[' + index + ']',
-            'dueDates[description-' + index + ']'
-            // Add more keys as needed
-        ];
+    deleteBtn.addEventListener("click", function () {
+        listContainer.remove();
+        tabBtn.remove();
+        console.log("before: " + listArray);
+        console.log("this is the length of the array: " + listArray.length);
     
-        chrome.storage.local.remove(keysToRemove, function() {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError);
-            } else {
-                console.log('Data associated with the deleted list removed from storage');
-            }
-        });
+        const index = listArray.findIndex(item => item.id === listID);
+        deleteListAndUpdateStorage(index);
     });
-
     // Create a label for displaying text and styling
     var colorLabel = document.createElement('label');
     colorLabel.htmlFor = 'colorInput';
@@ -722,45 +703,67 @@ function scrollFunction() {
 // Attach the scroll event listener
 window.addEventListener("scroll", scrollFunction);
 
-function moveListSettings(fromListIndex) {
-    // Remove the list from the inputValues and listToggles objects
-    delete inputValues['list' + fromListIndex];
-    delete listToggles['list' + fromListIndex];
-    delete taskArrays['list' + fromListIndex];
-    delete listColors[fromListIndex];
-    delete dueDates['description-' + fromListIndex];
+function deleteListAndUpdateStorage(fromListIndex) {
+    const fromListId = `list_${fromListIndex}`;
+
+    // Remove the list from the inputValues, listToggles, taskArrays, listColors, and dueDates objects
+    delete inputValues[fromListId];
+    delete listToggles[fromListId];
+    delete taskArrays[fromListId];
+    delete listColors[fromListId];
+    delete dueDates[`description-${fromListIndex}`];
+
+    // Remove the deleted list from the listArray
+    const indexToRemove = fromListIndex - 1;
+    listArray.splice(indexToRemove, 1);
 
     // Shift down the remaining lists
-    for (let i = fromListIndex + 1; i <= Object.keys(inputValues).length; i++) {
-        inputValues['list' + (i - 1)] = inputValues['list' + i];
-        listToggles['list' + (i - 1)] = listToggles['list' + i];
-        taskArrays['list' + (i - 1)] = taskArrays['list' + i];
-        listColors[(i - 1)] = listColors[i];
-        dueDates['description-' + (i - 1)] = dueDates['description-' + i];
+    for (let i = fromListIndex; i <= numOfLists; i++) {
+        const currentListId = `list_${i}`;
+        const previousListId = `list_${i - 1}`;
 
-        const tabBtn = document.getElementById("tab" + i);
-        const listTable = document.getElementById("table-" + i);
-        const listTask = document.getElementById("description-" + i);
-        const listTitle = document.getElementById("title-input-" + i);
+        inputValues[previousListId] = inputValues[currentListId] || {};
+        listToggles[previousListId] = listToggles[currentListId] || "";
+        taskArrays[previousListId] = taskArrays[currentListId] || [];
+        listColors[previousListId] = listColors[currentListId] || "#C4A577";
+        dueDates[`description-${i - 1}`] = dueDates[`description-${i}`] || {};
 
-        tabBtn.id = "tab" + (i - 1);
-        tabBtn.textContent = "List " + (i - 1);
-        listTable.id = "table-" + (i - 1);
-        listTask.id = "description-" + (i - 1);
-        listTitle.id = "title-input-" + (i - 1);
+        const tabBtn = document.getElementById(`tab${i}`);
+        const listTable = document.getElementById(`table-${i}`);
+        const listTask = document.getElementById(`description-${i}`);
+        const listTitle = document.getElementById(`title-input-${i}`);
+        const listContainer = document.getElementById(`list-container-${i}`);
+        const list = document.getElementById(`list${i}`);
+
+        if (tabBtn && listTable && listTask && listTitle && listContainer && list) {
+            tabBtn.id = `tab${i - 1}`;
+            tabBtn.textContent = `List ${i - 1}`;
+            listTable.id = `table-${i - 1}`;
+            listTask.id = `description-${i - 1}`;
+            listTitle.id = `title-input-${i - 1}`;
+            listContainer.id = `list-container-${i - 1}`;
+            list.id = `list${i - 1}`;
+        }
     }
 
     // Remove the last (now empty) list
-    const lastIndex = Object.keys(inputValues).length;
-    delete inputValues['list' + lastIndex];
-    delete listToggles['list' + lastIndex];
-    delete taskArrays['list' + lastIndex];
-    delete listColors[lastIndex];
-    delete dueDates['description-' + lastIndex];
+    const lastListId = `list_${numOfLists}`;
+    delete inputValues[lastListId];
+    delete listToggles[lastListId];
+    delete taskArrays[lastListId];
+    delete listColors[lastListId];
+    delete dueDates[`description-${numOfLists}`];
+
+    const lastTabBtn = document.getElementById(`tab${numOfLists}`);
+    const lastListContainer = document.getElementById(`list-container-${numOfLists}`);
+
+    if (lastTabBtn && lastListContainer) {
+        lastTabBtn.remove();
+        lastListContainer.remove();
+    }
 
     // Update the numOfLists variable
     numOfLists--;
-    listArray.splice(lastIndex);
 
     // Save the updated settings to Chrome storage
     chrome.storage.local.set({
@@ -771,7 +774,7 @@ function moveListSettings(fromListIndex) {
         dueDates: dueDates,
         listArray: listArray
     }, function () {
-        console.log('List ' + fromListIndex + ' deleted and lists shifted down');
-        console.log('this is the length of the list: ' + listArray.length);
+        console.log(`List ${fromListIndex} deleted and lists shifted down`);
+        console.log(`Number of remaining lists: ${listArray.length}`);
     });
 }
