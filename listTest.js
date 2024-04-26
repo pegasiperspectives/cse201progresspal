@@ -637,6 +637,24 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
 
         const index = listArray.findIndex(item => item.id === listID); //gets the index of the current list
         moveListSettings(index);
+
+        const keysToRemove = [
+            'listArray[' + index + ']',
+            'inputValues[list' + index + ']',
+            'listToggle[list' + index + ']',
+            'taskArrays[list' + index + ']',
+            'listColors[' + index + ']',
+            'dueDates[description-' + index + ']'
+            // Add more keys as needed
+        ];
+    
+        chrome.storage.local.remove(keysToRemove, function() {
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError);
+            } else {
+                console.log('Data associated with the deleted list removed from storage');
+            }
+        });
     });
 
     // Create a label for displaying text and styling
