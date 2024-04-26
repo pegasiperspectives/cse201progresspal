@@ -197,8 +197,8 @@ function createNewList() {
 
     const tabButton = document.createElement("button"); //creates a tab button for the list
     tabButton.className = "tab"; //gives the tab button a classname
-    tabButton.id = "tab" + numOfLists; //gives the tabButton an id based on which list it is
-    tabButton.textContent = "List " + numOfLists; //text that appears basede on which list it is
+    tabButton.id = `tab${numOfLists}`;
+    tabButton.textContent = `List ${numOfLists}`;
     tabButton.style.fontFamily = "listTitle"; //styling
     tabButton.style.fontSize = "20px"; //styling
     tabButton.style.height = "60px"; //styling
@@ -223,12 +223,12 @@ function createNewList() {
 
     const list = document.createElement("div"); //creates a list div for the list currently on
     list.classList.add("list"); //adds the class 'list' to the div element ^
-    list.id = "list" + numOfLists; //sets the id based on which list currently on
+    list.id = `list${numOfLists}`;
     const listID = list.id; //creates a list id variable
 
     const table = document.createElement("table"); //creates the table for this list
     table.className = tableClass; //gives table a classname
-    table.id = "table-" + numOfLists; //gives table an id
+    table.id = `table-${numOfLists}`;
     table.style.backgroundColor = color; //styling
 
     const settingsRow = document.createElement("tr"); //creates the row for the setting for this list
@@ -417,7 +417,7 @@ function createNewList() {
 //event listener that's set up in create list
 function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //contains parameters of necessary parts of list to use
     tabButton.addEventListener('click', function () { //runs when the tab button of this particular list is clicked
-        const table = document.getElementById("list" + numOfLists).querySelector('table'); //retrieves table for this list
+        const table = document.getElementById(`list${numOfLists}`).querySelector('table');
         table.classList.toggle("hidden"); //changes toggle state of list to show/hide tasks based on what it was on in the previous load
         console.log('Button clicked'); //outputs to console whether the code registered that the tab list button was clicked
 
@@ -491,7 +491,8 @@ function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //
 function addInputFieldEventListener(titleInput, numOfLists) { //contains necessary parameters for parts of list to edit
     titleInput.addEventListener('input', function (event) { //checks if user is typing in title row
         const inputValue = event.target.value; // Retrieve the value of the input box when the event is triggered
-        inputValues['list' + numOfLists] = inputValue; // Update inputValues object with the new value
+        const listId = `list_${numOfLists}`;
+        inputValues[listId] = inputValue;
         chrome.storage.local.set({ inputValues: inputValues }, function () { // Save the updated inputValues object to Chrome storage
             console.log('Input value saved for list ' + numOfLists + ':', inputValue); //outputs to console whether storage was successful
         });
@@ -584,8 +585,9 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
                 taskContainer.appendChild(lineBreak5); //styling
                 taskContainer.appendChild(completeImage); //adds the done button to the task container
                 taskCell3.appendChild(taskContainer); //adds the task to the correct table cell
-                taskArrays['list' + numOfLists] = taskArrays['list' + numOfLists] || []; //updates task array
-                taskArrays['list' + numOfLists].push({ id: taskID, description: taskDescription }); //push the tasks from this list into the array
+                const listId = `list_${numOfLists}`;
+                taskArrays[listId] = taskArrays[listId] || [];
+                taskArrays[listId].push({ id: taskID, description: taskDescription });
 
                 chrome.storage.local.set({ taskArrays: taskArrays }, function () { //makes sure the task array data is saved in chrome
                     console.log('Task added for list ' + numOfLists); //statement to see if the above line works ^
@@ -599,11 +601,11 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
 
 //event listener for the settings of each list
 function addSettingButtonEventListener(numOfLists, listID, textField) { //parameters for necessary elements of list to edit
-    const listContainer = document.getElementById("list-container-" + numOfLists); //accesses list container for this list
-    const tabBtn = document.getElementById("tab" + numOfLists); //accesses the list tab button for this list
-    const listTable = document.getElementById("table-" + numOfLists); //accesses the list table for this list
-    const listTask = document.getElementById("description-" + numOfLists); //accesses the tasks of this list
-    const listTitle = document.getElementById("title-input-" + numOfLists); //accesses the title input box for this list
+    const listContainer = document.getElementById(`list-container-${numOfLists}`);
+    const tabBtn = document.getElementById(`tab${numOfLists}`);
+    const listTable = document.getElementById(`table-${numOfLists}`);
+    const listTask = document.getElementById(`description-${numOfLists}`);
+    const listTitle = document.getElementById(`title-input-${numOfLists}`);
     const modalTrigger = document.getElementById("setting-btn-" + numOfLists); //accesses setting button for this list
     const modal = document.createElement("div"); //creates a modal
     modal.id = "modal-" + numOfLists; //gives modal an id based on which list this is
@@ -634,9 +636,19 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
         tabBtn.remove();
         console.log("before: " + listArray);
         console.log("this is the length of the array: " + listArray.length);
-    
+
         const index = listArray.findIndex(item => item.id === listID);
-        deleteListAndUpdateStorage(index);
+        if (index !== -1) {
+            listArray.splice(index, 1); // Remove item from listArray
+
+            // Update storage to reflect the removal
+            chrome.storage.local.set({ listArray: listArray }, function () {
+                console.log('List deleted and storage updated:', listArray);
+                location.reload();
+            });
+
+            deleteListAndUpdateStorage(index);
+        }
     });
     // Create a label for displaying text and styling
     var colorLabel = document.createElement('label');
