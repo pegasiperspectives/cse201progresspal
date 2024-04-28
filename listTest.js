@@ -6,6 +6,7 @@ let listToggles = {}; //holds the state of the toggled lists
 let taskArrays = {}; //holds the taskArrays
 let listColors = {}; //holds the colors for each background of each list
 let dueDates = {}; //contains the due dates for the tasks
+let taskCounter = 0;
 
 //creating the settings button & correlating modal for customizin
 const modal = document.createElement("div"); //creates the settings modal
@@ -38,6 +39,21 @@ let completeButtonDel = ""; //stand in for what will later be the done image url
 let completeButtons = ["puppy", "bird"]; //is the array that gives the user options for what they want
 let completeAccessories = ["sunglasses", "astronaut helmet"]; //is the array that gives the user options for their done button
 
+let encourageArray = ["you can do this!",
+    "I believe in you!",
+    "you got this!",
+    "I'm so proud of you!",
+    "you go dude!",
+    "You can do hard things!"];
+
+let momArray = ["I told you to get this done hours ago!",
+    "Get off your lazy butt!",
+    "Quit procrastinating and wasting time!"];
+
+let motivationThemes = ["encourage", "mom"];
+let quotes = [];
+
+
 window.onload = function () { //runs when the page loads
 
     //sets up setting & create list buttons
@@ -46,7 +62,7 @@ window.onload = function () { //runs when the page loads
     topRow.addEventListener("click", createAllSettings); //makes sure the user can access settings when button is clicked
 
     //retrieves all data from storage
-    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'completeButtonSrc', 'completeButtonDel', 'dueDates'], function (result) { //pulls values from storage
+    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'completeButtonSrc', 'completeButtonDel', 'dueDates', 'quotes', 'taskCounter'], function (result) { //pulls values from storage
         console.log('Data retrieved:', result); //to ensure that in inspect mode you can see if the correct data is present
 
         //housekeeping & setting up defaults
@@ -56,11 +72,21 @@ window.onload = function () { //runs when the page loads
         taskArrays = result.taskArrays || {};
         listColors = result.listColors || {};
         dueDates = result.dueDates || {};
+        quotes = result.quotes || {};
+        taskCounter = result.taskCounter || 0;
 
         console.log(taskArrays);
+        console.log(quotes);
+
+        // Choose a random quote index
+        const quoteIndex = Math.floor(Math.random() * quotes.length);
+        // Get the randomly chosen quote
+        const quote = quotes[quoteIndex];
+        // Display the quote in the text box
+        quoteTextBox.textContent = quote;
 
         // Reset numOfLists to the current length of listArray
-        numOfLists = listArray.length;
+        numOfLists = 0;
 
         bodyColor = result.bodyColor; //sets the background color of the extension
         completeButtonSrc = result.completeButtonSrc || "bird.png"; //sets up the complete button
@@ -72,7 +98,6 @@ window.onload = function () { //runs when the page loads
         topRow.style.backgroundColor = bodyColor; //makes sure the nav row background is the specific color
 
         //setting up the lists
-        numOfLists = 0; // Set numOfLists to the value retrieved from storage or 0 if not available
         console.log("number of lists: " + numOfLists); //to ensure that in inspect mode you can see how many lists there are
         console.log("list array length: " + listArray.length); //to ensure that in inspect mode you can see how long the list array is
         listArray.forEach((item) => { //goes through each list in storage
@@ -90,6 +115,56 @@ window.onload = function () { //runs when the page loads
     fullScreenButton.addEventListener("click", function () { //senses for click
         chrome.tabs.create({ url: "index.html" }); //opens up page in a new tab so that it takes up more of the screen
     });
+
+    // Create a select element for complete button
+    const motivationElement = document.createElement('select'); //creates a select element to control the animal for complete button
+    motivationElement.id = 'completeBtn'; // Set the id attribute for complete button
+    motivationElement.name = 'complete button'; // Set the name attribute for complete button
+    motivationElement.style.marginBottom = "10px"; //styling for complete button
+    motivationElement.style.display = "block"; //styling for complete button
+
+    // Create and append options
+    motivationThemes.forEach(button => { //goes through each option in the array
+        const optionElement1 = document.createElement('option'); //specifies that it's an option
+        optionElement1.value = button.toLowerCase(); // Set the value attribute
+        optionElement1.textContent = button; // Set the visible text
+        motivationElement.appendChild(optionElement1); //append the option to the select element
+        modal.appendChild(motivationElement); //add the selected complete button to the settings modal for the page
+    });
+
+    // Access the quoteTextBox div
+    const quoteTextBox = document.getElementById('quoteTextBox');
+
+    // Attach an event listener to the dropdown menu
+    motivationElement.addEventListener('change', function (event) {
+        const selectedTheme = event.target.value; // Get the selected theme from the dropdown
+        console.log('Selected theme:', selectedTheme); // Output the selected theme to the console
+        displayThemeQuotes(selectedTheme); // Display quotes for the selected theme
+    });
+
+    // Function to display quotes based on the selected theme
+    function displayThemeQuotes(theme) {
+        if (theme === 'encourage') {
+            quotes = encourageArray; // Get quotes for the "Encourage" theme
+        } else if (theme === 'mom') {
+            quotes = momArray; // Get quotes for the "Motivate" theme
+        }
+
+        console.log(quotes);
+
+        // Choose a random quote index
+        const quoteIndex = Math.floor(Math.random() * quotes.length);
+        // Get the randomly chosen quote
+        const quote = quotes[quoteIndex];
+        // Display the quote in the text box
+        quoteTextBox.textContent = quote;
+
+        // Save the updated listArray to Chrome storage
+        chrome.storage.local.set({ quotes: quotes }, function () { //storage
+            console.log('quotes saved to Chrome storage'); //console output for whether storage was successful
+        });
+    }
+
 
     // Create a select element for complete button
     const selectElement = document.createElement('select'); //creates a select element to control the animal for complete button
@@ -161,6 +236,7 @@ window.onload = function () { //runs when the page loads
     });
 }
 
+
 //creates the settings at the top of the page
 function createAllSettings() { //functioin to create overall settings
     event.stopPropagation(); //honestly I'm not sure why this is put here
@@ -197,8 +273,8 @@ function createNewList() {
 
     const tabButton = document.createElement("button"); //creates a tab button for the list
     tabButton.className = "tab"; //gives the tab button a classname
-    tabButton.id = `tab${numOfLists}`;
-    tabButton.textContent = `List ${numOfLists}`;
+    tabButton.id = "tab" + numOfLists;
+    tabButton.textContent = "List " + numOfLists;
     tabButton.style.fontFamily = "listTitle"; //styling
     tabButton.style.fontSize = "20px"; //styling
     tabButton.style.height = "60px"; //styling
@@ -223,12 +299,12 @@ function createNewList() {
 
     const list = document.createElement("div"); //creates a list div for the list currently on
     list.classList.add("list"); //adds the class 'list' to the div element ^
-    list.id = `list${numOfLists}`;
+    list.id = "list" + numOfLists;
     const listID = list.id; //creates a list id variable
 
     const table = document.createElement("table"); //creates the table for this list
     table.className = tableClass; //gives table a classname
-    table.id = `table-${numOfLists}`;
+    table.id = "table-" + numOfLists;
     table.style.backgroundColor = color; //styling
 
     const settingsRow = document.createElement("tr"); //creates the row for the setting for this list
@@ -417,7 +493,7 @@ function createNewList() {
 //event listener that's set up in create list
 function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //contains parameters of necessary parts of list to use
     tabButton.addEventListener('click', function () { //runs when the tab button of this particular list is clicked
-        const table = document.getElementById(`list${numOfLists}`).querySelector('table');
+        const table = document.getElementById("list" + numOfLists).querySelector('table');
         table.classList.toggle("hidden"); //changes toggle state of list to show/hide tasks based on what it was on in the previous load
         console.log('Button clicked'); //outputs to console whether the code registered that the tab list button was clicked
 
@@ -427,6 +503,7 @@ function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //
         chrome.storage.local.set({ listToggle: listToggles }, function () { //storage
             console.log('Toggle state saved for ' + numOfLists); //outputs whether storage was successful
         });
+
     });
 
     // Populate task containers based on the current state of taskArrays
@@ -471,11 +548,16 @@ function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //
 
             completeImage.addEventListener('click', function () { //checks if the done button is clicked
                 taskContainer.remove(); //removes the task through its container
+                taskCounter++;
+                checkForAchievements(taskCounter);
                 const index = taskArrays['list' + numOfLists].findIndex(task => task.id === taskID); //gets the index of the current task
                 if (index !== -1) { //makes sure the index is valid
                     taskArrays['list' + numOfLists].splice(index, 1); //shifts the array after removing the task
                     chrome.storage.local.set({ taskArrays: taskArrays }, function () { //updates storage for task
                         console.log('Task removed for list ' + numOfLists); //outputs to console whether storage was successful
+                    });
+                    chrome.storage.local.set({ taskCounter: taskCounter }, function () { //updates storage for task
+                        console.log('Task removed for list ' + taskCounter); //outputs to console whether storage was successful
                     });
                 }
             });
@@ -491,8 +573,7 @@ function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //
 function addInputFieldEventListener(titleInput, numOfLists) { //contains necessary parameters for parts of list to edit
     titleInput.addEventListener('input', function (event) { //checks if user is typing in title row
         const inputValue = event.target.value; // Retrieve the value of the input box when the event is triggered
-        const listId = `list_${numOfLists}`;
-        inputValues[listId] = inputValue;
+        inputValues['list' + numOfLists] = inputValue; // Update inputValues object with the new value
         chrome.storage.local.set({ inputValues: inputValues }, function () { // Save the updated inputValues object to Chrome storage
             console.log('Input value saved for list ' + numOfLists + ':', inputValue); //outputs to console whether storage was successful
         });
@@ -547,11 +628,16 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
 
                 completeImage.addEventListener('click', function () { //checks if the done button is clicked
                     taskContainer.remove(); //removes the task through its container
+                    taskCounter++;
+                    checkForAchievements(taskCounter);
                     const index = taskArrays['list' + numOfLists].findIndex(task => task.id === taskID); //gets the index of the current task
                     if (index !== -1) { //makes sure the index is valid
                         taskArrays['list' + numOfLists].splice(index, 1); //shifts the array after removing the task
                         chrome.storage.local.set({ taskArrays: taskArrays }, function () { //updates storage for task
                             console.log('Task removed for list ' + numOfLists); //outputs to console whether storage was successful
+                        });
+                        chrome.storage.local.set({ taskCounter: taskCounter }, function () { //updates storage for task
+                            console.log('Task removed for list ' + taskCounter); //outputs to console whether storage was successful
                         });
                     }
                 });
@@ -585,9 +671,8 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
                 taskContainer.appendChild(lineBreak5); //styling
                 taskContainer.appendChild(completeImage); //adds the done button to the task container
                 taskCell3.appendChild(taskContainer); //adds the task to the correct table cell
-                const listId = `list_${numOfLists}`;
-                taskArrays[listId] = taskArrays[listId] || [];
-                taskArrays[listId].push({ id: taskID, description: taskDescription });
+                taskArrays["list" + numOfLists] = taskArrays["list" + numOfLists] || [];
+                taskArrays["list" + numOfLists].push({ id: taskID, description: taskDescription });
 
                 chrome.storage.local.set({ taskArrays: taskArrays }, function () { //makes sure the task array data is saved in chrome
                     console.log('Task added for list ' + numOfLists); //statement to see if the above line works ^
@@ -601,11 +686,11 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
 
 //event listener for the settings of each list
 function addSettingButtonEventListener(numOfLists, listID, textField) { //parameters for necessary elements of list to edit
-    const listContainer = document.getElementById(`list-container-${numOfLists}`);
-    const tabBtn = document.getElementById(`tab${numOfLists}`);
-    const listTable = document.getElementById(`table-${numOfLists}`);
-    const listTask = document.getElementById(`description-${numOfLists}`);
-    const listTitle = document.getElementById(`title-input-${numOfLists}`);
+    const listContainer = document.getElementById("list-container-" + numOfLists); //accesses list container for this list
+    const tabBtn = document.getElementById("tab" + numOfLists); //accesses the list tab button for this list
+    const listTable = document.getElementById("table-" + numOfLists); //accesses the list table for this list
+    const listTask = document.getElementById("description-" + numOfLists); //accesses the tasks of this list
+    const listTitle = document.getElementById("title-input-" + numOfLists); //accesses the title input box for this list
     const modalTrigger = document.getElementById("setting-btn-" + numOfLists); //accesses setting button for this list
     const modal = document.createElement("div"); //creates a modal
     modal.id = "modal-" + numOfLists; //gives modal an id based on which list this is
@@ -647,7 +732,7 @@ function addSettingButtonEventListener(numOfLists, listID, textField) { //parame
                 location.reload();
             });
 
-            deleteListAndUpdateStorage(index);
+            //deleteListAndUpdateStorage(index);
         }
     });
     // Create a label for displaying text and styling
@@ -715,7 +800,7 @@ function scrollFunction() {
 // Attach the scroll event listener
 window.addEventListener("scroll", scrollFunction);
 
-function deleteListAndUpdateStorage(fromListIndex) {
+/* function deleteListAndUpdateStorage(fromListIndex) {
     const fromListId = `list_${fromListIndex}`;
 
     // Remove the list from the inputValues, listToggles, taskArrays, listColors, and dueDates objects
@@ -789,4 +874,29 @@ function deleteListAndUpdateStorage(fromListIndex) {
         console.log(`List ${fromListIndex} deleted and lists shifted down`);
         console.log(`Number of remaining lists: ${listArray.length}`);
     });
+} */
+
+function checkForAchievements(taskCounter) {
+    if (taskCounter % 10 == 0) {
+        // Create a modal element
+        const modal = document.createElement('div');
+        modal.classList.add('modal');
+
+        // Add content to the modal
+        modal.innerHTML = `
+        <div class="modal-content"  id="pmodal">
+            <span class="close">&times;</span>
+            <p>Congratulations! You've completed ${taskCounter} tasks!</p>
+        </div>
+    `;
+
+        // Append the modal to the body
+        document.body.appendChild(modal);
+
+        // Add functionality to close the modal when the close button is clicked
+        const closeButton = modal.querySelector('.close');
+        closeButton.addEventListener('click', function () {
+            modal.remove(); // Remove the modal from the DOM
+        });
+    }
 }
