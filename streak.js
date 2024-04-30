@@ -33,9 +33,10 @@ localStorage.setItem('streakCounter', streakCounter);
 localStorage.setItem('longestStreak', longestStreak);
 
 // Display the current streak on the page
-document.getElementById('streakCounter').textContent = streakCounter;
-document.getElementById('longestStreak').textContent = longestStreak;
-
+if (document.getElementById('streakCounter') != null) {
+    document.getElementById('streakCounter').textContent = streakCounter;
+    document.getElementById('longestStreak').textContent = longestStreak;
+}
 /**
  * Helper function to get the date for yesterday
  * @param {string} today - The current date in the format "MM/DD/YYYY"
