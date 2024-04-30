@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <link rel="stylesheet" href="style.css"> -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
   <link rel="stylesheet" href="style.css">
   <title>Calendar</title>
 </head>
@@ -18,8 +18,7 @@
       <div style="background-color: black; text-align: center;" id="topSettings">
         <li class="navBarItem"><a href="index.html" class="navBarLink">Lists</a></li>
         <li class="navBarItem"><a href="calendar.html" class="navBarLink active">Calendar</a></li>
-        <li class="navBarItem"><input type="image" height="100px" width="130px" src="download.png" text-align="center"
-
+        <li class="navBarItem"><a href="stats.html" class="navBarLink active">Statistics</a></li>
         <li class="navBarItem"><input type="image" height="100px" width="130px" src="download.png" text-align="center" id="overallSettings" /></li>
       </div>
     </div>
@@ -27,18 +26,14 @@
 </div>
 
 <body>
+    <h2 class="stats">Stats</h2>
+  
+    <div class="stat-container">
+        <p>Days Used: <span id="days-used">0</span></p>
+    </div>
 
-  <h2 class="calendar">Calendar</h2>
-
-  <div id="nav-buttons" class="nav-buttons">
-    <button id="prev-month">Previous Month</button>
-    <button id="next-month">Next Month</button>
-  </div>
-
-  <div id="calendar-container"></div>
-
+    <script src="listTest.js"></script>
+    <script src="stats.js"></script>
 </body>
 
 </html>
-
-<script src="clndrjs.js"></script>

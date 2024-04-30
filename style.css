@@ -9,7 +9,7 @@ body {
     line-height: 1.5;
     background: var(--clr-body-bg);
     color: var(--clr-text);
-    font-family: myFirstFont;
+    font-family:'Courier New', Courier, monospace;
 }
 
 :root {
@@ -412,7 +412,7 @@ Credit to w3schools navbar article*/
 }
 
 .navBarItem {
-    width: 33%;
+    width: 30%;
     display: inline-block;
 }
 
@@ -500,4 +500,10 @@ body {
 .nav-buttons button {
     padding: 8px 15px;
     cursor: pointer;
+}
+.stats { 
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+    font-size: xx-large;
+    text-align: center;
 }

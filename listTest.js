@@ -7,6 +7,7 @@ let taskArrays = {}; //holds the taskArrays
 let listColors = {}; //holds the colors for each background of each list
 let dueDates = {}; //contains the due dates for the tasks
 let taskCounter = 0;
+let daysUsed = new Set();
 
 //creating the settings button & correlating modal for customizin
 const modal = document.createElement("div"); //creates the settings modal
@@ -55,14 +56,19 @@ let quotes = [];
 
 
 window.onload = function () { //runs when the page loads
-
+    const currentDate = new Date().toDateString(); 
+    daysUsed.add(currentDate);
     //sets up setting & create list buttons
     const newListButton = document.getElementById("generate new list"); //clickable button to generate a new list
     newListButton.addEventListener("click", createNewList); //creates a new list when the button is clicked
     topRow.addEventListener("click", createAllSettings); //makes sure the user can access settings when button is clicked
 
     //retrieves all data from storage
-    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'completeButtonSrc', 'completeButtonDel', 'dueDates', 'quotes', 'taskCounter'], function (result) { //pulls values from storage
+    chrome.storage.local.get(['listArray', 'inputValues', 'listToggle', 'taskArrays', 'listColors', 'bodyColor', 'completeButtonSrc', 'completeButtonDel', 'dueDates', 'quotes', 'taskCounter', 'daysUsed'], function(result){ //pulls values from storage
+        daysUsed = new Set(result.daysUsed || []); 
+        const currentDate = new Date().toDateString(); 
+        daysUsed.add(currentDate); 
+     
         console.log('Data retrieved:', result); //to ensure that in inspect mode you can see if the correct data is present
 
         //housekeeping & setting up defaults
@@ -105,7 +111,11 @@ window.onload = function () { //runs when the page loads
             console.log("creating list # " + numOfLists); //to ensure that in inspect mode you can see if the lists are getting created correctly
         });
     });
-
+    chrome.storage.local.set({
+        daysUsed: Array.from(daysUsed)
+    }, function () {
+        console.log('Statistics saved to Chrome storage');
+    });
     //full screen option
     const fullScreenButton = document.createElement('button'); //creates the full screen button
     fullScreenButton.textContent = "make the extension take up your screen!"; //controls what text appears on the full screen button
@@ -546,20 +556,21 @@ function addTabButtonEventListener(tabButton, numOfLists, table, taskCell3) { //
                 completeImage.src = completeButtonSrc; //sets the button back to its original image
             });
 
-            completeImage.addEventListener('click', function () { //checks if the done button is clicked
-                taskContainer.remove(); //removes the task through its container
+            completeImage.addEventListener('click', function () {
+                taskContainer.remove();
                 taskCounter++;
                 checkForAchievements(taskCounter);
-                const index = taskArrays['list' + numOfLists].findIndex(task => task.id === taskID); //gets the index of the current task
-                if (index !== -1) { //makes sure the index is valid
-                    taskArrays['list' + numOfLists].splice(index, 1); //shifts the array after removing the task
-                    chrome.storage.local.set({ taskArrays: taskArrays }, function () { //updates storage for task
-                        console.log('Task removed for list ' + numOfLists); //outputs to console whether storage was successful
+                const index = taskArrays['list' + numOfLists].findIndex(task => task.id === taskID);
+                if (index !== -1) {
+                    taskArrays['list' + numOfLists].splice(index, 1);
+                    chrome.storage.local.set({ taskArrays: taskArrays }, function () {
+                        console.log('Task removed for list ' + numOfLists);
                     });
-                    chrome.storage.local.set({ taskCounter: taskCounter }, function () { //updates storage for task
-                        console.log('Task removed for list ' + taskCounter); //outputs to console whether storage was successful
+                    chrome.storage.local.set({ taskCounter: taskCounter }, function () {
+                        console.log('Task removed for list ' + taskCounter);
                     });
                 }
+                
             });
 
             taskContainer.appendChild(taskParagraph); //adds the task paragraph to the task container
@@ -585,6 +596,7 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
     textField.addEventListener("keypress", function (event) { //adds keypress listener to the task input text box
         if (event.keyCode === 13) { // Check if Enter key is pressed
             const value = textField.value.trim(); //retrieves the text from the texfield
+           
             if (value !== '') { //checks that a task has been entered into the input box
                 const taskID = Date.now(); //generates a unique task id
                 var taskDescription = "• " + value; //sets the task description to the text entered by user
@@ -640,6 +652,7 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
                             console.log('Task removed for list ' + taskCounter); //outputs to console whether storage was successful
                         });
                     }
+                   
                 });
 
                 dayInput = document.getElementById("day" + numOfLists); //gets the day for the task
@@ -673,7 +686,7 @@ function addTaskInputEventListener(textField, numOfLists, taskCell3, today) { //
                 taskCell3.appendChild(taskContainer); //adds the task to the correct table cell
                 taskArrays["list" + numOfLists] = taskArrays["list" + numOfLists] || [];
                 taskArrays["list" + numOfLists].push({ id: taskID, description: taskDescription });
-
+                
                 chrome.storage.local.set({ taskArrays: taskArrays }, function () { //makes sure the task array data is saved in chrome
                     console.log('Task added for list ' + numOfLists); //statement to see if the above line works ^
                 });
