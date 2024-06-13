@@ -390,7 +390,7 @@ Credit to w3schools navbar article*/
     /* Fix the navbar position */
     top: 0;
     left: 0;
-    width: 700px;
+    width: 100%;
     /* Place it at the top of the viewport */
 }
 
