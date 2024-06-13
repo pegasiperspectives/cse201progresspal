@@ -278,7 +278,8 @@ function createNewList() {
     numOfLists++; //increments the number of lists
 
     const numOfTabs = listArray.length; //sets this variable to the number of lists
-    const tabWidth = `${100 / numOfTabs}%`; // Sets tab width of the lists as a percentage based on the number of tabs    const color = listColors[numOfLists] || "#C4A577"; //sets color for the list based on what's in storage or default color here
+    const tabWidth = `${90 / numOfTabs}%`; // Sets tab width of the lists as a percentage based on the number of tabs 
+    const color = listColors[numOfLists] || "#C4A577"; //sets color for the list based on what's in storage or default color here
 
     const tabButton = document.createElement("button"); //creates a tab button for the list
     tabButton.className = "tab"; //gives the tab button a classname
